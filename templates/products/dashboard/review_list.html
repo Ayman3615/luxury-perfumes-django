@@ -1,0 +1,62 @@
+{% extends 'products/dashboard/dashboard_base.html' %}
+
+{% block title %}إدارة التقييمات | لوحة التحكم{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header { margin-bottom: 30px; }
+    .table-container { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); padding: 20px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: right; }
+    th, td { padding: 15px; border-bottom: 1px solid var(--border); }
+    th { color: var(--gold); }
+    
+    .stars { color: var(--gold); font-size: 18px; letter-spacing: 2px; }
+    .delete-link { color: #e74c3c; text-decoration: none; font-weight: bold; transition: 0.3s; }
+    .delete-link:hover { opacity: 0.7; }
+</style>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-header">
+    <h2 style="color: var(--gold); margin: 0;">⭐️ تقييمات العملاء</h2>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>العميل</th>
+                <th>المنتج</th>
+                <th>التقييم</th>
+                <th style="width: 40%;">التعليق</th>
+                <th>التاريخ</th>
+                <th>الإجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews %}
+            <tr>
+                <td style="font-weight: bold;">{{ review.user.username }}</td>
+                <td>{{ review.product.name }}</td>
+                <td class="stars">
+                    {% if review.rating == 1 %}★☆☆☆☆{% endif %}
+                    {% if review.rating == 2 %}★★☆☆☆{% endif %}
+                    {% if review.rating == 3 %}★★★☆☆{% endif %}
+                    {% if review.rating == 4 %}★★★★☆{% endif %}
+                    {% if review.rating == 5 %}★★★★★{% endif %}
+                </td>
+                <td style="color: #ccc; line-height: 1.5; font-size: 14px;">{{ review.comment }}</td>
+                <td style="color: #888; font-size: 13px;">{{ review.created_at|date:"d M Y" }}</td>
+                <td>
+                    <a href="{% url 'dashboard_review_delete' review.id %}" class="delete-link" onclick="return confirm('هل أنت متأكد من حذف هذا التقييم؟');">🗑️ حذف</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; color: #aaa; padding: 30px;">لا توجد تقييمات حتى الآن.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

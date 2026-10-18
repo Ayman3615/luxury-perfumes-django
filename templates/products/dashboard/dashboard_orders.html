@@ -1,0 +1,254 @@
+{% extends 'products/dashboard/dashboard_base.html' %}
+
+{% block title %}إدارة الطلبات | لوحة التحكم{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* أنيميشن الدخول السلس */
+    @keyframes fadeInTable {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header-section {
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        margin-bottom: 30px; 
+        flex-wrap: wrap; 
+        gap: 20px;
+        border-bottom: 1px dashed var(--border);
+        padding-bottom: 20px;
+    }
+
+    .header-section h2 {
+        margin: 0; 
+        color: var(--gold); 
+        font-size: 24px;
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+    }
+    
+    .header-section p {
+        margin: 8px 0 0 0; 
+        color: #888; 
+        font-size: 14px;
+    }
+
+    /* تنسيق مربع البحث الذكي */
+    .search-box {
+        width: 100%;
+        max-width: 450px;
+        padding: 14px 20px;
+        background: #111;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        color: white;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    }
+    .search-box:focus {
+        outline: none;
+        border-color: var(--gold);
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+        background: #151515;
+    }
+
+    .card { 
+        background: var(--bg-card); 
+        padding: 30px; 
+        border-radius: 16px; 
+        border: 1px solid var(--border); 
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        overflow-x: auto;
+        animation: fadeInTable 0.5s ease forwards;
+    }
+
+    /* تنسيق الجدول الاحترافي */
+    .custom-table { width: 100%; text-align: right; border-collapse: collapse; }
+    .custom-table th, .custom-table td { padding: 16px 15px; border-bottom: 1px solid #222; font-size: 14px; white-space: nowrap; vertical-align: middle; }
+    .custom-table th { color: var(--gold); background: #111; font-weight: bold; border-bottom: 2px solid var(--border); }
+    .custom-table tr { transition: background 0.3s ease; }
+    .custom-table tr:hover td { background: rgba(255, 255, 255, 0.02); color: white; }
+
+    /* تنسيق حالات الطلب */
+    .status-badge { 
+        padding: 6px 12px; 
+        border-radius: 20px; 
+        font-size: 12px; 
+        font-weight: bold; 
+        display: inline-flex; 
+        align-items: center;
+        gap: 5px;
+    }
+    .status-pending { background: rgba(149, 165, 166, 0.15); color: #95a5a6; border: 1px solid rgba(149, 165, 166, 0.3); }
+    .status-processing { background: rgba(52, 152, 219, 0.15); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3); }
+    .status-shipped { background: rgba(243, 156, 18, 0.15); color: #f39c12; border: 1px solid rgba(243, 156, 18, 0.3); }
+    .status-delivered { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
+    .status-cancelled { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
+    
+    /* تنسيق حالة الدفع المصغرة */
+    .pay-badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-top: 5px; display: inline-block; }
+    .pay-pending { background: rgba(243, 156, 18, 0.1); color: #f39c12; border: 1px solid rgba(243, 156, 18, 0.2); }
+    .pay-paid { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.2); }
+    .pay-failed { background: rgba(231, 76, 60, 0.1); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.2); }
+
+    .tracking-badge { 
+        background: rgba(255,255,255,0.05); 
+        padding: 4px 10px; 
+        border-radius: 6px; 
+        font-family: monospace; 
+        font-size: 13px; 
+        border: 1px dashed #555; 
+        color: #ccc;
+        letter-spacing: 1px;
+    }
+    
+    .btn-view { 
+        background: var(--gold); 
+        color: #111; 
+        padding: 8px 16px; 
+        border-radius: 8px; 
+        text-decoration: none; 
+        font-weight: bold; 
+        font-size: 13px; 
+        transition: all 0.3s ease; 
+        display: inline-block; 
+        box-shadow: 0 4px 10px rgba(212, 175, 55, 0.2);
+    }
+    .btn-view:hover { 
+        background: #f1c40f; 
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(212, 175, 55, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="header-section">
+    <div>
+        <h2>📦 السجل الشامل للطلبات</h2>
+        <p>إدارة جميع الطلبات، متابعة حالات الشحن، والبحث السريع.</p>
+    </div>
+    
+    <!-- مربع البحث الذكي -->
+    <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث برقم الطلب، العميل، الهاتف، أو المدينة..." onkeyup="filterTable()">
+</div>
+
+<div class="card">
+    <table class="custom-table" id="ordersTable">
+        <thead>
+            <tr>
+                <th>رقم الطلب</th>
+                <th>التاريخ والوقت</th>
+                <th>العميل والهاتف</th>
+                <th>المنطقة (المحافظة والمركز)</th>
+                <th>بوليصة الشحن</th>
+                <th>الإجمالي</th>
+                <th>معلومات الدفع</th>
+                <th>حالة الطلب</th>
+                <th style="text-align: center;">إجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td style="font-weight: bold; color: white; font-family: monospace; font-size: 15px;">#{{ order.id }}</td>
+                
+                <!-- التاريخ والساعة -->
+                <td>
+                    <div style="color: #aaa; font-size: 13px;">{{ order.created_at|date:"Y-m-d" }}</div>
+                    <div style="color: #777; font-size: 11px; margin-top: 2px;">⏰ {{ order.created_at|time:"H:i" }}</div>
+                </td>
+                
+                <!-- العميل ورقم التليفون مدمجين -->
+                <td>
+                    <div style="font-weight: bold; color: #eee; font-size: 14px;">{{ order.name }}</div>
+                    <div style="font-family: monospace; font-size: 12px; color: #ccc; direction: ltr; text-align: right; margin-top: 3px;">📞 {{ order.phone }}</div>
+                </td>
+
+                <!-- المدينة والمركز مع Tooltip للعنوان بالكامل -->
+                <td title="العنوان بالتفصيل: {{ order.address }}" style="cursor: help;">
+                    <div style="color: var(--gold); font-weight: bold; font-size: 13px;">📍 {{ order.get_city_display|default:order.city|title }}</div>
+                    <div style="color: #888; font-size: 12px; margin-top: 2px;">{{ order.district|default:"-" }}</div>
+                </td>
+                
+                <!-- بوليصة الشحن -->
+                <td>
+                    {% if order.tracking_number %}
+                        <span class="tracking-badge">{{ order.tracking_number }}</span>
+                    {% else %}
+                        <span style="color: #666; font-size: 13px;">— قيد الانتظار —</span>
+                    {% endif %}
+                </td>
+
+                <td style="color: var(--gold); font-weight: bold; font-size: 15px;">{{ order.total_price }} ج.م</td>
+                
+                <!-- معلومات الدفع المجمعة (الطريقة + الحالة) -->
+                <td>
+                    <div style="color: #ddd; font-size: 13px;">
+                        {% if order.payment_method == 'cash' %}💵 نقداً عند الاستلام
+                        {% elif order.payment_method == 'vodafone' %}🔴 فودافون كاش
+                        {% elif order.payment_method == 'instapay_manual' %}🟣 إنستاباي
+                        {% else %}💳 إلكتروني{% endif %}
+                    </div>
+                    
+                    {% if order.payment_status == 'completed' or order.payment_status == 'paid' or order.payment_status == 'accepted' or order.payment_status == 'مقبول' %}
+                        <span class="pay-badge pay-paid">✅ الدفع مقبول</span>
+                    {% elif order.payment_status == 'failed' or order.payment_status == 'rejected' or order.payment_status == 'مرفوض' %}
+                        <span class="pay-badge pay-failed">❌ الدفع مرفوض</span>
+                    {% else %}
+                        <span class="pay-badge pay-pending">⏳ قيد المراجعة</span>
+                    {% endif %}
+                </td>
+                
+                <!-- حالة الطلب الرئيسية -->
+                <td>
+                    {% if order.status == 'pending' %}
+                        <span class="status-badge status-pending">⏳ قيد المراجعة</span>
+                    {% elif order.status == 'processing' %}
+                        <span class="status-badge status-processing">⚙️ جاري التجهيز</span>
+                    {% elif order.status == 'shipped' %}
+                        <span class="status-badge status-shipped">🚚 تم الشحن</span>
+                    {% elif order.status == 'delivered' %}
+                        <span class="status-badge status-delivered">✅ تم التوصيل</span>
+                    {% elif order.status == 'cancelled' %}
+                        <span class="status-badge status-cancelled">❌ ملغي</span>
+                    {% else %}
+                        <span class="status-badge status-pending">{{ order.status }}</span>
+                    {% endif %}
+                </td>
+                
+                <td style="text-align: center;">
+                    <a href="{% url 'dashboard_order_detail' order.id %}" class="btn-view">👁️ التفاصيل</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" style="text-align: center; padding: 50px; color: #777; font-size: 15px;">
+                    لا توجد أي طلبات مسجلة حتى الآن.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function filterTable() {
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let table = document.getElementById("ordersTable");
+        let tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            let rowText = tr[i].textContent.toLowerCase();
+            
+            if (rowText.includes(input)) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,583 @@
+{% extends 'products/shop_base.html' %}
+{% load i18n static %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}
+  {% if 'en' in LANGUAGE_CODE %}AI Perfume Finder | Luxury Perfumes{% else %} مستشار العطور الذكي | Luxury Perfumes{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.ai-finder-wrapper {
+    max-width: 820px;
+    margin: 25px auto 70px;
+    padding: 0 15px;
+    font-family: 'Cairo', 'Poppins', sans-serif;
+}
+
+.ai-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.ai-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #d4af37, #b8860b);
+    color: #fff !important;
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+}
+
+.ai-header h2 {
+    font-size: 30px;
+    font-weight: 800;
+    color: #d4af37 !important;
+    margin-bottom: 10px;
+}
+
+.ai-header p {
+    color: var(--text-color, #cccccc);
+    opacity: 0.9;
+    font-size: 15px;
+    max-width: 620px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.ai-card {
+    background: var(--card-bg, #1a1a1a);
+    border-radius: 22px;
+    padding: 30px 25px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+[data-theme="light"] .ai-card {
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.ai-question-group {
+    margin-bottom: 24px;
+}
+
+.ai-question-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-color, #ffffff);
+    margin-bottom: 12px;
+}
+
+[data-theme="light"] .ai-question-group label {
+    color: #1a1a1a;
+}
+
+.ai-question-group label i {
+    color: #d4af37;
+}
+
+.ai-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ai-chip {
+    background: rgba(128, 128, 128, 0.1);
+    border: 1.5px solid rgba(128, 128, 128, 0.22);
+    border-radius: 50px;
+    padding: 9px 18px;
+    font-family: 'Cairo', 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color, #e0e0e0);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+[data-theme="light"] .ai-chip {
+    background: #f8f9fa;
+    color: #333333;
+    border-color: #e2e6ea;
+}
+
+.ai-chip:hover {
+    border-color: #d4af37;
+}
+
+.ai-chip.active {
+    background: linear-gradient(135deg, #1f1f1f, #111111) !important;
+    color: #d4af37 !important;
+    border-color: #d4af37 !important;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
+}
+
+.ai-text-input {
+    width: 100%;
+    height: 50px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(128, 128, 128, 0.25);
+    background: rgba(128, 128, 128, 0.06);
+    color: var(--text-color, #fff);
+    padding: 0 15px;
+    font-family: 'Cairo', 'Poppins', sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+[data-theme="light"] .ai-text-input {
+    background: #fff;
+    color: #222;
+    border-color: #ddd;
+}
+
+.ai-text-input:focus {
+    outline: none;
+    border-color: #d4af37;
+}
+
+.ai-submit-btn {
+    width: 100%;
+    height: 55px;
+    background: linear-gradient(135deg, #d4af37, #b5891c);
+    color: #fff !important;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Cairo', 'Poppins', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+    margin-top: 10px;
+}
+
+.ai-submit-btn:hover {
+    transform: translateY(-2px);
+}
+
+.ai-loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: #d4af37;
+}
+
+.ai-spinner {
+    width: 45px;
+    height: 45px;
+    border: 4px solid rgba(212, 175, 55, 0.2);
+    border-top: 4px solid #d4af37;
+    border-radius: 50%;
+    animation: aiSpin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes aiSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.ai-results-section {
+    margin-top: 40px;
+}
+
+.ai-intro-msg {
+    text-align: center;
+    font-size: 22px;
+    color: #d4af37;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+.ai-rec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.ai-rec-card {
+    background: var(--card-bg, #1e1e1e);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+[data-theme="light"] .ai-rec-card {
+    background: #ffffff;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.ai-match-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #111111;
+    color: #d4af37;
+    border: 1px solid #d4af37;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 2;
+}
+
+.ai-rec-img {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+}
+
+.ai-rec-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-rec-body h4 {
+    margin: 0 0 6px;
+    font-size: 19px;
+    color: var(--text-color, #fff);
+}
+
+[data-theme="light"] .ai-rec-body h4 {
+    color: #111;
+}
+
+.ai-rec-price {
+    font-weight: 800;
+    color: #d4af37;
+    font-size: 17px;
+    margin-bottom: 12px;
+}
+
+.ai-rec-reason {
+    background: rgba(212, 175, 55, 0.08);
+    border-inline-start: 3px solid #d4af37;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: var(--text-color, #ddd);
+    line-height: 1.6;
+    margin-bottom: 18px;
+    flex: 1;
+}
+
+[data-theme="light"] .ai-rec-reason {
+    background: #fcfaf5;
+    color: #444;
+}
+
+.ai-view-btn {
+    display: block;
+    text-align: center;
+    background: linear-gradient(135deg, #d4af37, #b5891c);
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    transition: opacity 0.2s;
+}
+
+.ai-view-btn:hover {
+    opacity: 0.92;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ai-finder-wrapper">
+    <!-- الهيدر الترحيبي -->
+    <div class="ai-header">
+        <div class="ai-badge">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            {% if 'en' in LANGUAGE_CODE %}Powered by AI{% else %} مستشار العطور {% endif %}
+        </div>
+        <h2>{% if 'en' in LANGUAGE_CODE %}Find Your Signature Scent{% else %}اعثر على عطرك المثالي{% endif %}</h2>
+        <p>
+            {% if 'en' in LANGUAGE_CODE %}
+                Select your preferences and let our AI Perfume Expert recommend the best fragrances tailored to your personality from our luxury collection.
+            {% else %}
+                حدد تفضيلاتك وسيقوم خبير العطور الذكي بترشيح أنسب العطور لشخصيتك من مجموعتنا الفاخرة
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- فورم الاختيارات السريعة -->
+    <form id="aiFinderForm" class="ai-card">
+        {% csrf_token %}
+
+        <!-- 1. الفئة -->
+        <div class="ai-question-group">
+            <label>
+                <i class="fa-solid fa-venus-mars"></i>
+                {% if 'en' in LANGUAGE_CODE %}Who is this fragrance for?{% else %}لمن تبحث عن العطر؟{% endif %}
+            </label>
+            <div class="ai-chips" data-input="gender">
+                <button type="button" class="ai-chip active" data-value="{% if 'en' in LANGUAGE_CODE %}Men{% else %}رجالي{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Men 🤵{% else %}رجالي 🤵{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Women{% else %}نسائي{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Women 💃{% else %}نسائي 💃{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Unisex{% else %}للجنسين{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Unisex ✨{% else %}للجنسين ✨{% endif %}
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. الفصل -->
+        <div class="ai-question-group">
+            <label>
+                <i class="fa-solid fa-cloud-sun"></i>
+                {% if 'en' in LANGUAGE_CODE %}Preferred Season & Vibe{% else %}الفصل والأجواء المفضلة{% endif %}
+            </label>
+            <div class="ai-chips" data-input="season">
+                <button type="button" class="ai-chip active" data-value="{% if 'en' in LANGUAGE_CODE %}Warm & Cozy Winter{% else %}شتوي دافئ وثقيل{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Warm Winter ❄️{% else %}شتوي دافئ ❄️{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Fresh & Cool Summer{% else %}صيفي منعش وبارد{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Fresh Summer ☀️{% else %}صيفي منعش ☀️{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}All Seasons{% else %}مناسب لكل الفصول{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}All Seasons 🌸{% else %}لكل الفصول 🌸{% endif %}
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. وقت الاستخدام -->
+        <div class="ai-question-group">
+            <label>
+                <i class="fa-solid fa-clock"></i>
+                {% if 'en' in LANGUAGE_CODE %}Occasion & Time of Day{% else %}وقت الاستخدام والمناسبة{% endif %}
+            </label>
+            <div class="ai-chips" data-input="time_of_day">
+                <button type="button" class="ai-chip active" data-value="{% if 'en' in LANGUAGE_CODE %}Night Out & Special Evenings{% else %}خروجات ليلية وسهرات خاصة{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Night Out & Evenings 🌙{% else %}سهرات وخروج ليلي 🌙{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Daily / Work & University{% else %}صباحي وللعمل والجامعة{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Daily / Work 💼{% else %}صباحي / للعمل 💼{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Formal Events & Meetings{% else %}مناسبات رسمية واجتماعات{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Formal Occasions 🎩{% else %}مناسبات رسمية 🎩{% endif %}
+                </button>
+            </div>
+        </div>
+
+        <!-- 4. قوة العطر -->
+        <div class="ai-question-group">
+            <label>
+                <i class="fa-solid fa-fire"></i>
+                {% if 'en' in LANGUAGE_CODE %}Longevity & Projection{% else %}درجة الثبات والفوحان{% endif %}
+            </label>
+            <div class="ai-chips" data-input="strength">
+                <button type="button" class="ai-chip active" data-value="{% if 'en' in LANGUAGE_CODE %}Beast Mode & Bold Projection{% else %}قوي جداً وفواح يملأ المكان{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Strong & Bold 🔥{% else %}قوي وجريء 🔥{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Moderate & Elegant{% else %}متوسط ومتوازن وأنيق{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Balanced & Elegant ⚖️{% else %}متوازن وأنيق ⚖️{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Soft & Subtle{% else %}هادئ وناعم قريب من الجلد{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Soft & Subtle 🍃{% else %}هادئ وناعم 🍃{% endif %}
+                </button>
+            </div>
+        </div>
+
+        <!-- 5. الروائح المفضلة -->
+        <div class="ai-question-group">
+            <label>
+                <i class="fa-solid fa-flask"></i>
+                {% if 'en' in LANGUAGE_CODE %}Favorite Notes (Select multiple){% else %}ما الروائح التي تجذبك؟ (يمكنك اختيار أكثر من رائحة){% endif %}
+            </label>
+            <div class="ai-chips multi-select" id="notesChips">
+                <button type="button" class="ai-chip active" data-value="{% if 'en' in LANGUAGE_CODE %}Vanilla{% else %}فانيليا{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Vanilla 🍦{% else %}فانيليا 🍦{% endif %}
+                </button>
+                <button type="button" class="ai-chip active" data-value="{% if 'en' in LANGUAGE_CODE %}Tobacco{% else %}تبغ{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Tobacco 🍂{% else %}تبغ (Tobacco) 🍂{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Oud & Woods{% else %}عود وأخشاب{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Oud & Woods 🪵{% else %}عود وأخشاب 🪵{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Citrus & Bergamot{% else %}حمضيات وبرغموت{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Fresh Citrus 🍋{% else %}حمضيات منعشة 🍋{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Warm Spices & Cinnamon{% else %}توابل وقرفة{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Warm Spices 🌶️{% else %}توابل دافئة (Spicy) 🌶️{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Fruity & Sweet{% else %}فواكه وحلوى{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Fruity & Sweet 🍬{% else %}فواكه وسويت 🍬{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Floral & Jasmine{% else %}زهور وياسمين{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Floral & Rose 🌸{% else %}زهور وورود 🌸{% endif %}
+                </button>
+                <button type="button" class="ai-chip" data-value="{% if 'en' in LANGUAGE_CODE %}Amber & Musk{% else %}عنبر ومسك{% endif %}">
+                    {% if 'en' in LANGUAGE_CODE %}Amber & Musk ✨{% else %}عنبر ومسك ✨{% endif %}
+                </button>
+            </div>
+        </div>
+
+        <!-- 6. تفاصيل إضافية -->
+        <div class="ai-question-group">
+            <label>
+                <i class="fa-solid fa-comment-dots"></i>
+                {% if 'en' in LANGUAGE_CODE %}Any specific perfume you love or extra details? (Optional){% else %}هل هناك عطر معين تحبه أو تفاصيل إضافية؟ (اختياري){% endif %}
+            </label>
+            <input type="text" id="extraDetails" class="ai-text-input"
+                   placeholder="{% if 'en' in LANGUAGE_CODE %}e.g., I love scents similar to Khamrah or Bleu de Chanel...{% else %}مثال: أحب العطور الشبيهة بـ خمرة أو بلو دي شانيل...{% endif %}">
+        </div>
+
+        <button type="submit" class="ai-submit-btn" id="aiSubmitBtn">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            {% if 'en' in LANGUAGE_CODE %}Find My Perfect Perfume Now{% else %}رشح لي عطري المثالي الآن{% endif %}
+        </button>
+    </form>
+
+    <!-- حالة التحميل -->
+    <div id="aiLoading" class="ai-loading" style="display: none;">
+        <div class="ai-spinner"></div>
+        <p>
+            {% if 'en' in LANGUAGE_CODE %}
+                Our AI Perfume Expert is analyzing your taste and matching fragrance notes...
+            {% else %}
+                يقوم خبير العطور الذكي بتحليل ذوقك ومطابقة النوتات العطرية...
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- منطقة عرض النتائج -->
+    <div id="aiResultsSection" class="ai-results-section" style="display: none;">
+        <h3 id="aiIntroMessage" class="ai-intro-msg"></h3>
+        <div id="aiRecommendationsGrid" class="ai-rec-grid"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const isEn = "{{ LANGUAGE_CODE }}".includes("en");
+    const currencyLabel = isEn ? "EGP" : "ج.م";
+    const matchLabel = isEn ? "Match" : "توافق";
+    const viewBtnLabel = isEn ? "Explore & Order Now" : "استكشف العطر واطلبه الآن";
+    const warnTitle = isEn ? "Notice" : "تنبيه";
+    const errTitle = isEn ? "Oops!" : "عذراً";
+    const connErrText = isEn ? "Connection error, please try again." : "حدث خطأ في الاتصال، يرجى المحاولة مرة أخرى.";
+
+    document.querySelectorAll('.ai-chips:not(.multi-select)').forEach(group => {
+        group.querySelectorAll('.ai-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                group.querySelectorAll('.ai-chip').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    });
+
+    document.querySelectorAll('#notesChips .ai-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+    });
+
+    const form = document.getElementById('aiFinderForm');
+    const loading = document.getElementById('aiLoading');
+    const resultsSection = document.getElementById('aiResultsSection');
+    const recGrid = document.getElementById('aiRecommendationsGrid');
+    const introMsg = document.getElementById('aiIntroMessage');
+    const submitBtn = document.getElementById('aiSubmitBtn');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const getSelected = (name) => {
+            const activeChip = document.querySelector(`.ai-chips[data-input="${name}"] .ai-chip.active`);
+            return activeChip ? activeChip.dataset.value : '';
+        };
+
+        const selectedNotes = Array.from(document.querySelectorAll('#notesChips .ai-chip.active'))
+                                   .map(c => c.dataset.value).join(', ');
+
+        const payload = {
+            lang: isEn ? "en" : "ar",
+            gender: getSelected('gender'),
+            season: getSelected('season'),
+            time_of_day: getSelected('time_of_day'),
+            strength: getSelected('strength'),
+            notes: selectedNotes,
+            extra_details: document.getElementById('extraDetails').value
+        };
+
+        submitBtn.disabled = true;
+        loading.style.display = 'block';
+        resultsSection.style.display = 'none';
+        loading.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        try {
+            const response = await fetch("{% url 'api_recommend_perfumes' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            loading.style.display = 'none';
+            submitBtn.disabled = false;
+
+            if (data.status === 'success' && data.recommendations && data.recommendations.length > 0) {
+                introMsg.textContent = data.intro_message;
+                recGrid.innerHTML = '';
+
+                data.recommendations.forEach(item => {
+                    recGrid.innerHTML += `
+                        <div class="ai-rec-card">
+                            <div class="ai-match-badge">${matchLabel} ${item.match_percentage}% ✨</div>
+                            ${item.image_url ? `<img src="${item.image_url}" alt="${item.name}" class="ai-rec-img">` : ''}
+                            <div class="ai-rec-body">
+                                <h4>${item.name}</h4>
+                                <span class="ai-rec-price">${item.price} ${currencyLabel}</span>
+                                <p class="ai-rec-reason"><i class="fa-solid fa-quote-left"></i> ${item.reason}</p>
+                                <a href="${item.detail_url}" class="ai-view-btn">${viewBtnLabel}</a>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                resultsSection.style.display = 'block';
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: warnTitle,
+                    text: data.error,
+                    confirmButtonColor: '#d4af37'
+                });
+            }
+        } catch (err) {
+            loading.style.display = 'none';
+            submitBtn.disabled = false;
+            Swal.fire({
+                icon: 'error',
+                title: errTitle,
+                text: connErrText,
+                confirmButtonColor: '#d4af37'
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

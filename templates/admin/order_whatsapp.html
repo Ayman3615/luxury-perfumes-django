@@ -1,0 +1,86 @@
+{% extends "admin/base_site.html" %} {% block content %}
+<div
+  style="
+    max-width: 600px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: #000;
+  "
+>
+  <h2 style="text-align: center; color: #25d366">
+    💬 رسالة الواتساب للطلب #{{ order.id }}
+  </h2>
+
+  <textarea
+    id="whatsappMessage"
+    style="
+      width: 100%;
+      height: 300px;
+      padding: 15px;
+      font-size: 16px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      direction: rtl;
+    "
+    readonly
+  >
+{{ message }}</textarea
+  >
+
+  <!-- 🔴 الزرار الجديد: يرسل للعميل مباشرة -->
+  <!-- بنستخدم urlencode عشان المسافات والرموز تتبعت صح في الرابط -->
+  <a
+    href="https://wa.me/{{ whatsapp_phone }}?text={{ message|urlencode }}"
+    target="_blank"
+    style="
+      display: block;
+      width: 100%;
+      margin-top: 15px;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      background: #128c7e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      text-align: center;
+      text-decoration: none;
+    "
+  >
+    📲 إرسال للعميل مباشرة
+  </a>
+
+  <!-- الزرار القديم للنسخ لو هتبعتها لشركة الشحن -->
+  <button
+    onclick="copyMessage()"
+    style="
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      background: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    "
+  >
+    📋 أو نسخ الرسالة (لإرسالها لشركة الشحن)
+  </button>
+</div>
+
+<script>
+  function copyMessage() {
+    var copyText = document.getElementById("whatsappMessage");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    alert("تم نسخ الرسالة بنجاح!");
+  }
+</script>
+{% endblock %}

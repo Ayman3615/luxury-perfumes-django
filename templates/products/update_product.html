@@ -1,0 +1,322 @@
+{% extends 'products/dashboard/dashboard_base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "تعديل المنتج | لوحة التحكم" %}{% endblock %}
+
+{% block extra_css %}
+  <!-- استدعاء ملف التنسيقات المستقل الخاص بلوحة التحكم -->
+  <link rel="stylesheet" href="{% static 'products/css/dashboard_form.css' %}">
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="form-container">
+  <h2>✏️ {% trans "تعديل بيانات العطر" %}</h2>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="form-grid">
+      {% for field in form %}
+        <div class="form-group {% if field.name in 'description,name,image,image_2,image_3,bundled_products' %}full-width{% endif %}" {% if field.name == 'bundled_products' %}id="bundled-products-group"{% endif %}>
+
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+          <!-- 💡 استثناء حقول الصور عشان نعرضها مع زرار الحذف -->
+          {% if field.name == 'image' or field.name == 'image_2' or field.name == 'image_3' %}
+
+             {% if field.name == 'image' and form.instance.image %}
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px; padding: 10px; background: #151515; border: 1px dashed #444; border-radius: 8px;">
+                  <img src="{{ form.instance.image.url }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #333;">
+                  <label style="color: #e74c3c; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 13px; margin: 0;">
+                    <input type="checkbox" name="delete_image" value="yes" style="width: 18px; height: 18px; accent-color: #e74c3c;">
+                    🗑️ {% trans "حذف الصورة الحالية" %}
+                  </label>
+                </div>
+             {% endif %}
+
+             {% if field.name == 'image_2' and form.instance.image_2 %}
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px; padding: 10px; background: #151515; border: 1px dashed #444; border-radius: 8px;">
+                  <img src="{{ form.instance.image_2.url }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #333;">
+                  <label style="color: #e74c3c; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 13px; margin: 0;">
+                    <input type="checkbox" name="delete_image_2" value="yes" style="width: 18px; height: 18px; accent-color: #e74c3c;">
+                    🗑️ {% trans "حذف الصورة الثانية" %}
+                  </label>
+                </div>
+             {% endif %}
+
+             {% if field.name == 'image_3' and form.instance.image_3 %}
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px; padding: 10px; background: #151515; border: 1px dashed #444; border-radius: 8px;">
+                  <img src="{{ form.instance.image_3.url }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #333;">
+                  <label style="color: #e74c3c; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 13px; margin: 0;">
+                    <input type="checkbox" name="delete_image_3" value="yes" style="width: 18px; height: 18px; accent-color: #e74c3c;">
+                    🗑️ {% trans "حذف الصورة الثالثة" %}
+                  </label>
+                </div>
+             {% endif %}
+
+             <!-- حقل رفع الملف -->
+             <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" accept="image/*" style="padding: 10px; background: #1a1a1a; border: 1px dashed #444; border-radius: 8px; color: white; cursor: pointer; width: 100%;">
+
+          {% else %}
+             {{ field }}
+          {% endif %}
+
+          {% if field.help_text %}
+            <small style="color: #888; font-size: 12px; margin-top: 5px;">{{ field.help_text }}</small>
+          {% endif %}
+
+          {% for error in field.errors %}
+            <div class="error-text" style="color: #e74c3c; font-size: 13px; margin-top: 5px;">❌ {{ error }}</div>
+          {% endfor %}
+
+        </div>
+      {% endfor %}
+
+      <!-- 📸 معرض الصور (Gallery) المتعددة -->
+      <div class="form-group full-width" style="margin-top: 15px; background: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #333;">
+          <label style="color: var(--gold); border-bottom: 1px dashed #333; padding-bottom: 10px; margin-bottom: 15px; font-size: 16px; display: block;">
+              📸 {% trans "إضافة صور لمعرض المنتج (Gallery)" %}
+          </label>
+
+          <!-- هذا الجزء يخص صفحة التعديل فقط لعرض الصور القديمة إن وجدت -->
+          {% if form.instance.id and form.instance.productimage_set.all %}
+              <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #444;">
+                  {% for gallery_img in form.instance.productimage_set.all %}
+                      <div style="background: #111; padding: 10px; border-radius: 10px; border: 1px solid #333; text-align: center;">
+                          <img src="{{ gallery_img.image.url }}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;">
+                          <label style="color: #e74c3c; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 12px; font-weight: bold; margin: 0;">
+                              <input type="checkbox" name="delete_gallery_images" value="{{ gallery_img.id }}" style="width: 14px; height: 14px; accent-color: #e74c3c; cursor: pointer;">
+                              {% trans "حذف" %}
+                          </label>
+                      </div>
+                  {% endfor %}
+              </div>
+          {% endif %}
+
+          <!-- حاوية الحقول الجديدة لرفع الصور -->
+          <div id="gallery-inputs-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+              <!-- حقل رفع صورة افتراضي واحد -->
+              <div style="display: flex; gap: 10px; align-items: center;">
+                  <input type="file" name="gallery" accept="image/*" style="flex: 1; padding: 10px; background: #111; border: 1px dashed #444; border-radius: 6px; color: white; cursor: pointer;">
+              </div>
+          </div>
+
+          <!-- زرار سحري لإضافة خانات جديدة -->
+          <button type="button" onclick="addGalleryInput()" style="background: transparent; color: var(--gold); border: 1px dashed var(--gold); padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;" onmouseover="this.style.background='rgba(212, 175, 55, 0.1)'" onmouseout="this.style.background='transparent'">
+              ➕ {% trans "إضافة خانة لصورة جديدة" %}
+          </button>
+      </div>
+          <!-- 💡 عرض صور الجاليري القديمة مع زر الحذف -->
+          {% if form.instance.id %}
+              <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
+                  {% for gallery_img in form.instance.productimage_set.all %}
+                      <div style="background: #111; padding: 10px; border-radius: 10px; border: 1px solid #333; text-align: center;">
+                          <img src="{{ gallery_img.image.url }}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;">
+                          <label style="color: #e74c3c; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 12px; font-weight: bold; margin: 0;">
+                              <input type="checkbox" name="delete_gallery_images" value="{{ gallery_img.id }}" style="width: 14px; height: 14px; accent-color: #e74c3c; cursor: pointer;">
+                              {% trans "حذف" %}
+                          </label>
+                      </div>
+                  {% endfor %}
+                  <!-- احتياطي لو مسمي العلاقة images -->
+                  {% for gallery_img in form.instance.images.all %}
+                      <div style="background: #111; padding: 10px; border-radius: 10px; border: 1px solid #333; text-align: center;">
+                          <img src="{{ gallery_img.image.url }}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;">
+                          <label style="color: #e74c3c; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 12px; font-weight: bold; margin: 0;">
+                              <input type="checkbox" name="delete_gallery_images" value="{{ gallery_img.id }}" style="width: 14px; height: 14px; accent-color: #e74c3c; cursor: pointer;">
+                              {% trans "حذف" %}
+                          </label>
+                      </div>
+                  {% endfor %}
+              </div>
+          {% endif %}
+
+          <input type="file" name="gallery" multiple accept="image/*" style="background: transparent; border: none; padding: 0; width: 100%;">
+          <small style="color: #888; display: block; margin-top: 5px;">{% trans "يمكنك تحديد أكثر من صورة في نفس الوقت." %}</small>
+      </div>
+
+ <!-- 🌿 الإتجاهات العطرية (النوتات) -->
+      <div class="form-group full-width" style="margin-top: 15px; background: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #333;">
+          <label style="color: var(--gold); border-bottom: 1px dashed #333; padding-bottom: 10px; margin-bottom: 15px; font-size: 16px; display: block;">
+              🧪 {% trans "الإتجاهات العطرية (النوتات)" %}
+          </label>
+<div id="accords-container" style="display: flex; flex-direction: column; gap: 15px;">
+    {% if form.instance.accords.all %}
+        {% for accord in form.instance.accords.all %}
+        <div class="accord-row" style="display: flex; gap: 10px; align-items: center; background: #111; padding: 15px; border-radius: 8px; border: 1px solid #444;">
+            <!-- خانة النوتة بالعربي -->
+            <input type="text" name="accord_name" value="{{ accord.name }}" placeholder="{% trans 'اسم النوتة (مثل: عود)' %}" required onkeyup="autoPredictColor(this)" style="flex: 1.5; padding: 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: white;">
+
+            <!-- 🆕 خانة النوتة بالإنجليزي (اللي كانت ناقصة في العرض) -->
+            <input type="text" name="accord_name_en" value="{{ accord.name_en|default_if_none:'' }}" placeholder="{% trans 'النوتة (إنجليزي)' %}" style="flex: 1.5; padding: 10px; background: #1a1a1a; border: 1px dashed var(--gold); border-radius: 6px; color: white;">
+
+            <input type="number" name="accord_percentage" value="{{ accord.percentage }}" placeholder="{% trans 'النسبة %' %}" required min="1" max="100" style="flex: 1; padding: 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: white;">
+            <input type="color" name="accord_color" value="{{ accord.color_theme }}" required style="width: 50px; height: 44px; background: transparent; border: none; cursor: pointer; padding: 0;" title="{% trans 'اختر اللون' %}">
+            <button type="button" onclick="this.parentElement.remove()" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 15px; cursor: pointer; font-weight: bold;">X</button>
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
+          <button type="button" onclick="addAccordRow()" style="margin-top: 15px; background: transparent; color: var(--gold); border: 1px dashed var(--gold); padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;" onmouseover="this.style.background='rgba(212, 175, 55, 0.1)'" onmouseout="this.style.background='transparent'">
+              + {% trans "إضافة اتجاه عطري جديد" %}
+          </button>
+      </div>
+
+      <div class="action-buttons" style="display: flex; gap: 15px; margin-top: 30px; grid-column: 1 / -1;">
+        <button type="submit" class="btn-submit" style="background: var(--gold); color: #111; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; flex: 2;">💾 {% trans "حفظ التعديلات" %}</button>
+        <a href="{% url 'dashboard_product_list' %}" class="btn-back" style="background: #333; color: white; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; text-align: center; text-decoration: none; flex: 1;">{% trans "إلغاء" %}</a>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<script>
+  // 1. سكريبت إخفاء وإظهار حقل الباقات المجمعة
+  document.addEventListener("DOMContentLoaded", function() {
+    const isBundleCheckbox = document.getElementById("id_is_bundle");
+    const bundledProductsGroup = document.getElementById("bundled-products-group");
+
+    function toggleBundledProducts() {
+      if (isBundleCheckbox && bundledProductsGroup) {
+        if (isBundleCheckbox.checked) {
+          bundledProductsGroup.style.display = "block";
+        } else {
+          bundledProductsGroup.style.display = "none";
+        }
+      }
+    }
+    toggleBundledProducts();
+    if (isBundleCheckbox) isBundleCheckbox.addEventListener("change", toggleBundledProducts);
+  });
+
+  // 2. سكريبت توقع الألوان الذكي
+  const colorDictionary = {
+      'خشب': '#8b4513', 'عود': '#5c4033', 'صندل': '#d2b48c', 'أرز': '#a0522d',
+      'ليمون': '#f1c40f', 'برتقال': '#e67e22', 'حمضيات': '#f39c12', 'برغموت': '#f39c12',
+      'فانيليا': '#f5deb3', 'عنبر': '#d35400', 'مسك': '#ffebcd', 'تونكا': '#8b4513',
+      'ورد': '#ff69b4', 'ياسمين': '#fffacd', 'لافندر': '#9b59b6', 'أزهار': '#ffb6c1',
+      'نعناع': '#2ecc71', 'باتشولي': '#27ae60', 'عشب': '#7cfc00', 'منعش': '#2ecc71',
+      'توابل': '#c0392b', 'قرفة': '#d2691e', 'هيل': '#8b4513', 'فلفل': '#696969',
+      'ماء': '#3498db', 'بحر': '#2980b9', 'أكوا': '#00bfff',
+      'جلد': '#8b4513', 'تبغ': '#cd853f', 'أروماتك': '#8e44ad'
+  };
+
+  function autoPredictColor(inputElem) {
+      let text = inputElem.value.toLowerCase();
+      let colorPicker = inputElem.parentElement.querySelector('input[type="color"]');
+
+      for (const [keyword, hex] of Object.entries(colorDictionary)) {
+          if (text.includes(keyword)) {
+              colorPicker.value = hex;
+              break;
+          }
+      }
+  }
+
+  // 🟢 3. التعديل الجذري هنا: دالة إضافة النوتة بقت تدعم خانتين (عربي + إنجليزي)
+  function addAccordRow() {
+    const container = document.getElementById('accords-container');
+    const row = document.createElement('div');
+    row.className = 'accord-row';
+    row.style.cssText = 'display: flex; gap: 10px; align-items: center; background: #111; padding: 15px; border-radius: 8px; border: 1px solid #444; animation: fadeIn 0.3s ease; margin-bottom: 10px;';
+
+    row.innerHTML = `
+        <input type="text" name="accord_name" placeholder="النوتة (عربي)" required onkeyup="autoPredictColor(this)" style="flex: 1.5; padding: 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: white;">
+        <input type="text" name="accord_name_en" placeholder="النوتة (إنجليزي - تلقائي)" style="flex: 1.5; padding: 10px; background: #1a1a1a; border: 1px dashed var(--gold); border-radius: 6px; color: white;">
+        <input type="number" name="accord_percentage" placeholder="النسبة %" required min="1" max="100" style="flex: 1; padding: 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: white;">
+        <input type="color" name="accord_color" value="#d4af37" required style="width: 50px; height: 44px; background: transparent; border: none; cursor: pointer; padding: 0;" title="اختر اللون">
+        <button type="button" onclick="this.parentElement.remove()" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 15px; cursor: pointer; font-weight: bold;">X</button>
+    `;
+    container.appendChild(row);
+  }
+
+  // 4. سكريبت إضافة خانة صورة جديدة للمعرض ديناميكياً
+  function addGalleryInput() {
+      const container = document.getElementById('gallery-inputs-container');
+      const row = document.createElement('div');
+      row.style.cssText = 'display: flex; gap: 10px; align-items: center; animation: fadeIn 0.3s ease;';
+
+      row.innerHTML = `
+          <input type="file" name="gallery" accept="image/*" required style="flex: 1; padding: 10px; background: #111; border: 1px dashed #444; border-radius: 6px; color: white; cursor: pointer;">
+          <button type="button" onclick="this.parentElement.remove()" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 15px; cursor: pointer; font-weight: bold;" title="إلغاء الصورة">❌</button>
+      `;
+      container.appendChild(row);
+  }
+
+  // ==========================================
+  // 5. 🤖 كود زرار الترجمة السحري (مربوط بجوجل)
+  // ==========================================
+  setTimeout(() => {
+      let nameAr = document.querySelector('[name="name"]');
+      let nameEn = document.querySelector('[name="name_en"]');
+      let descAr = document.querySelector('[name="description"]');
+      let descEn = document.querySelector('[name="description_en"]');
+
+      if (nameEn) {
+          let translateBtn = document.createElement("button");
+          translateBtn.type = "button";
+          translateBtn.innerHTML = "✨ ترجمة تلقائية للإنجليزية";
+          translateBtn.style.cssText = "background: #d4af37; color: #111; padding: 12px 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 15px; width: 100%; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(212, 175, 55, 0.2);";
+
+          // إضافة الزرار قبل حقل الاسم الإنجليزي
+          nameEn.parentNode.insertBefore(translateBtn, nameEn);
+
+          async function googleTranslate(text) {
+              if (!text) return "";
+              let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+              let res = await fetch(url);
+              let data = await res.json();
+              return data[0].map(item => item[0]).join('');
+          }
+
+          translateBtn.addEventListener("click", async function(e) {
+              e.preventDefault();
+
+              if ((!nameAr || !nameAr.value) && (!descAr || !descAr.value)) {
+                  alert("⚠️ يرجى كتابة الاسم والوصف بالعربي أولاً قبل الترجمة!");
+                  return;
+              }
+
+              let originalText = this.innerHTML;
+              let originalBg = this.style.background;
+
+              this.innerHTML = "⏳ جاري الترجمة من جوجل...";
+              this.style.background = "#888";
+
+              try {
+                  // 1. ترجمة الاسم والوصف
+                  if (nameAr && nameAr.value) nameEn.value = await googleTranslate(nameAr.value);
+                  if (descAr && descAr.value) descEn.value = await googleTranslate(descAr.value);
+
+                  // ==========================================
+                  // 🌿 2. ترجمة النوتات العطرية كلها مرة واحدة
+                  // ==========================================
+                  let accordNamesAr = document.querySelectorAll('input[name="accord_name[]"], input[name="accord_name"]');
+                  let accordNamesEn = document.querySelectorAll('input[name="accord_name_en[]"], input[name="accord_name_en"]');
+
+                  for (let i = 0; i < accordNamesAr.length; i++) {
+                      if (accordNamesAr[i].value && accordNamesEn[i]) {
+                          accordNamesEn[i].value = await googleTranslate(accordNamesAr[i].value);
+                      }
+                  }
+
+                  this.innerHTML = "✅ تمت الترجمة بنجاح!";
+                  this.style.background = "#2ecc71";
+                  this.style.color = "white";
+
+                  setTimeout(() => {
+                      this.innerHTML = originalText;
+                      this.style.background = originalBg;
+                      this.style.color = "#111";
+                  }, 3000);
+              } catch (error) {
+                  alert("❌ حدث خطأ في الاتصال بجوجل.. تأكد من الإنترنت.");
+                  this.innerHTML = originalText;
+                  this.style.background = originalBg;
+              }
+          });
+      }
+  }, 500);
+</script>
+{% endblock %}

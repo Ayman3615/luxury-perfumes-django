@@ -1,0 +1,38 @@
+{% extends 'products/shop_base.html' %}
+{% load i18n %}
+{% block content %}
+
+<div class="modern-filter-wrapper hidden-reveal">
+    <form id="filter-form" action="{% url 'user_product_list' %}" class="modern-filter-form">
+        <input type="hidden" name="category" id="category-input" value="{{ request.GET.category|default_if_none:'' }}">
+
+        <div class="search-input-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" name="q" value="{{ request.GET.q|default_if_none:'' }}" placeholder="{% trans 'ابحث عن عطر أو مكونات...' %}" autocomplete="off">
+        </div>
+
+        <div class="category-filters">
+            <button type="button" data-val="" class="cat-btn {% if not request.GET.category %}active{% endif %}">{% trans "الكل" %}</button>
+            <button type="button" data-val="men" class="cat-btn {% if request.GET.category == 'men' %}active{% endif %}">{% trans "رجالي" %}</button>
+            <button type="button" data-val="women" class="cat-btn {% if request.GET.category == 'women' %}active{% endif %}">{% trans "نسائي" %}</button>
+            <button type="button" data-val="unisex" class="cat-btn {% if request.GET.category == 'unisex' %}active{% endif %}">{% trans "للجنسين" %}</button>
+        </div>
+
+        <div class="sort-dropdown">
+            <select name="sort">
+                <option value="">{% trans "الترتيب الافتراضي" %}</option>
+                <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>{% trans "الأرخص أولاً" %}</option>
+                <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>{% trans "الأغلى أولاً" %}</option>
+            </select>
+        </div>
+    </form>
+</div>
+
+<div id="dynamic-product-grid">
+    {% include 'products/partials/product_grid.html' %}
+</div>
+
+{% endblock %}

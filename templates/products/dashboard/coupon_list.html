@@ -1,0 +1,96 @@
+{% extends 'products/dashboard/dashboard_base.html' %}
+
+{% block title %}إدارة الكوبونات | لوحة التحكم{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    .btn-gold {
+        background: var(--gold);
+        color: #111;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .btn-gold:hover { opacity: 0.9; }
+    
+    .table-container {
+        background: var(--bg-card);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        padding: 20px;
+        overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; text-align: right; }
+    th, td { padding: 15px; border-bottom: 1px solid var(--border); }
+    th { color: var(--gold); }
+    
+    .badge { padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; }
+    .bg-success { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+    .bg-danger { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+    
+    .action-links a { margin-right: 10px; text-decoration: none; font-size: 14px; }
+    .edit-link { color: #3498db; }
+    .delete-link { color: #e74c3c; }
+</style>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-header">
+    <h2 style="color: var(--gold); margin: 0;">🎟️ إدارة أكواد الخصم</h2>
+    <!-- رابط إضافة كوبون (هنبرمجه في الخطوة اللي جاية) -->
+    <a href="{% url 'dashboard_coupon_add' %}" class="btn-gold">➕ إضافة كود خصم جديد</a>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>كود الخصم (Code)</th>
+                <th>نسبة الخصم (%)</th>
+                <th>الحالة</th>
+                <th>الإجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for coupon in coupons %}
+            <tr>
+                <td style="font-weight: bold; font-size: 18px;">{{ coupon.code }}</td>
+                <td style="color: var(--gold); font-weight: bold;">{{ coupon.discount }}%</td>
+                <td>
+                    <a href="{% url 'toggle_coupon' coupon.id %}" style="text-decoration: none;">
+                        {% if coupon.active %}
+                            <span class="badge bg-success" style="cursor: pointer;">✅ شغال (اضغط للإيقاف)</span>
+                        {% else %}
+                            <span class="badge bg-danger" style="cursor: pointer;">❌ متوقف (اضغط للتشغيل)</span>
+                        {% endif %}
+                    </a>
+                </td>
+                <td style="color: #aaa; font-size: 14px;">
+                    {% if coupon.valid_until %}
+                        ينتهي في: <br> {{ coupon.valid_until|date:"d M Y - h:i A" }}
+                    {% else %}
+                        مفتوح دائماً
+                    {% endif %}
+                </td>
+                <td class="action-links">
+                    <a href="{% url 'dashboard_coupon_update' coupon.id %}" class="edit-link">✏️ تعديل</a>
+                    <a href="{% url 'dashboard_coupon_delete' coupon.id %}" class="delete-link" onclick="return confirm('هل أنت متأكد؟');">🗑️ حذف</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center; color: #aaa; padding: 30px;">لا توجد أكواد خصم متاحة حالياً.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

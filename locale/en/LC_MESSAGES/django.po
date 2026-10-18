@@ -1,0 +1,913 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-18 13:09+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: products/views.py:284
+msgid "بيانات الدخول غير صحيحة"
+msgstr "Invalid login credentials"
+
+#: products/views.py:453
+#, python-format
+msgid "تمت إضافة %(name)s إلى السلة بنجاح! 🛒"
+msgstr "%(name)s added to cart successfully! 🛒"
+
+#: products/views.py:762
+msgid "⚠️ يرجى رفع صورة إيصال التحويل لتأكيد طلبك."
+msgstr "⚠️️ Please upload the transfer receipt to confirm your order."
+
+#: products/views.py:797
+#, python-format
+msgid "عذراً، الكمية المطلوبة من '%(name)s' غير متوفرة (المتاح: %(stock)s فقط)."
+msgstr ""
+"Sorry, the requested quantity of '%(name)s' is not available (Only %(stock)s "
+"left)."
+
+#: products/views.py:851
+#, python-format
+msgid ""
+"❌ الإيصال المرفق غير مطابق لإجمالي الفاتورة (%(total)s ج.م)، أو الصورة غير "
+"واضحة. يرجى التأكد وإعادة الرفع."
+msgstr ""
+"❌ The attached receipt does not match the total invoice (%(total)s EGP), or "
+"the image is unclear. Please check and re-upload."
+
+#: products/views.py:856
+msgid "✅ تمت مطابقة الإيصال بواسطة الذكاء الاصطناعي. طلبك قيد التجهيز!"
+msgstr "✅ Receipt verified by AI. Your order is being processed!"
+
+#: products/views.py:921
+msgid "حدث خطأ أثناء الاتصال ببوابة الدفع. يرجى المحاولة مرة أخرى."
+msgstr "Error connecting to the payment gateway. Please try again."
+
+#: products/views.py:996
+#, python-format
+msgid "🎉 تم الدفع بنجاح! رقم العملية: %(trans_id)s"
+msgstr "🎉 Payment successful! Transaction ID: %(trans_id)s"
+
+#: products/views.py:999
+msgid ""
+"❌ فشلت عملية الدفع أو تم رفضها من البنك. يرجى المحاولة مرة أخرى أو اختيار "
+"الدفع عند الاستلام."
+msgstr ""
+"❌ Payment failed or declined by the bank. Please try again or choose Cash "
+"on Delivery."
+
+#: templates/products/add_product.html:4
+msgid "إضافة منتج جديد | لوحة التحكم"
+msgstr "Add New Product | Dashboard"
+
+#: templates/products/add_product.html:61
+msgid "إضافة عطر جديد"
+msgstr "Add New Perfume"
+
+#: templates/products/add_product.html:84
+#: templates/products/update_product.html:78
+msgid "إضافة صور لمعرض المنتج (Gallery)"
+msgstr "Add images to product gallery"
+
+#: templates/products/add_product.html:95
+#: templates/products/update_product.html:89
+#: templates/products/update_product.html:117
+#: templates/products/update_product.html:127
+msgid "حذف"
+msgstr "Delete"
+
+#: templates/products/add_product.html:112
+#: templates/products/update_product.html:106
+msgid "إضافة خانة لصورة جديدة"
+msgstr "Add a new image field"
+
+#: templates/products/add_product.html:118
+#: templates/products/update_product.html:141
+msgid "الإتجاهات العطرية (النوتات)"
+msgstr "Fragrance Notes"
+
+#: templates/products/add_product.html:126
+#: templates/products/dashboard/dashboard_form.html:158
+#, fuzzy
+#| msgid "اسم النوتة (مثل: عود)"
+msgid "اسم النوتة (عربي)"
+msgstr "Note Name (e.g., Oud)"
+
+#: templates/products/add_product.html:128
+#: templates/products/dashboard/dashboard_form.html:161
+#: templates/products/update_product.html:151
+#, fuzzy
+#| msgid "اسم النوتة (مثل: عود)"
+msgid "النوتة (إنجليزي)"
+msgstr "Note Name (e.g., Oud)"
+
+#: templates/products/add_product.html:130
+#: templates/products/dashboard/dashboard_form.html:164
+#: templates/products/update_product.html:153
+#, python-format
+msgid "النسبة %%"
+msgstr "Percentage %%"
+
+#: templates/products/add_product.html:132
+#: templates/products/dashboard/dashboard_form.html:167
+#: templates/products/update_product.html:154
+msgid "اختر اللون"
+msgstr "Choose Color"
+
+#: templates/products/add_product.html:141
+#: templates/products/dashboard/dashboard_form.html:177
+msgid "إضافة اتجاه عطري"
+msgstr "Add Fragrance Note"
+
+#: templates/products/add_product.html:145
+msgid "حفظ المنتج الجديد"
+msgstr "Save New Product"
+
+#: templates/products/add_product.html:146
+#: templates/products/update_product.html:167
+msgid "إلغاء"
+msgstr "Cancel"
+
+#: templates/products/cart.html:11
+msgid "سلة المشتريات"
+msgstr "Shopping Cart"
+
+#: templates/products/cart.html:21 templates/products/home.html:31
+#: templates/products/home.html:73
+#: templates/products/partials/product_grid.html:10
+#: templates/products/wishlist.html:22
+msgid "بدون صورة"
+msgstr "No Image"
+
+#: templates/products/cart.html:27
+msgid "الحجم:"
+msgstr "Size:"
+
+#: templates/products/cart.html:27
+msgid "ML"
+msgstr ""
+
+#: templates/products/cart.html:29
+msgid "سعر القطعة:"
+msgstr "Unit Price:"
+
+#: templates/products/cart.html:29 templates/products/cart.html:44
+#: templates/products/cart.html:57 templates/products/checkout.html:137
+#: templates/products/checkout.html:147 templates/products/checkout.html:149
+#: templates/products/checkout.html:157 templates/products/checkout.html:165
+#: templates/products/home.html:44 templates/products/home.html:86
+#: templates/products/my_orders.html:105
+#: templates/products/order_success.html:17
+#: templates/products/order_success.html:31
+#: templates/products/partials/product_grid.html:22
+#: templates/products/product_detail.html:168
+#: templates/products/product_detail.html:310
+#: templates/products/wishlist.html:41
+msgid "ج.م"
+msgstr "EGP"
+
+#: templates/products/cart.html:34
+msgid "تقليل"
+msgstr "Decrease"
+
+#: templates/products/cart.html:38
+msgid "زيادة"
+msgstr "Increase"
+
+#: templates/products/cart.html:50
+msgid "إزالة"
+msgstr "Remove"
+
+#: templates/products/cart.html:57 templates/products/order_success.html:17
+msgid "الإجمالي:"
+msgstr "Total:"
+
+#: templates/products/cart.html:63
+msgid "متابعة الدفع"
+msgstr "Proceed to Checkout"
+
+#: templates/products/cart.html:75
+msgid "سلة المشتريات الخاصة بك فارغة"
+msgstr "Your shopping cart is empty"
+
+#: templates/products/cart.html:76
+msgid "اكتشف مجموعتنا الحصرية من العطور الفاخرة وأضفها هنا."
+msgstr ""
+"Discover our exclusive collection of luxury perfumes and add them here."
+
+#: templates/products/cart.html:82
+msgid "العودة للتسوق"
+msgstr "Back to Shopping"
+
+#: templates/products/checkout.html:14
+msgid "إتمام الطلب"
+msgstr "Checkout"
+
+#: templates/products/checkout.html:18
+msgid "بيانات الشحن والتوصيل"
+msgstr "Shipping Details"
+
+#: templates/products/checkout.html:25
+msgid "الاسم بالكامل"
+msgstr "Full Name"
+
+#: templates/products/checkout.html:26
+msgid "الاسم الثلاثي"
+msgstr "Full Name (3 words)"
+
+#: templates/products/checkout.html:31
+msgid "رقم الهاتف"
+msgstr "Phone Number"
+
+#: templates/products/checkout.html:36
+msgid "البريد الإلكتروني"
+msgstr "Email"
+
+#: templates/products/checkout.html:43
+msgid "المحافظة"
+msgstr "Governorate"
+
+#: templates/products/checkout.html:45
+msgid "اختر المحافظة (سيتم حساب الشحن)"
+msgstr "Select Governorate (Shipping calculated)"
+
+#: templates/products/checkout.html:46
+msgid "المنطقة الأولى"
+msgstr "Zone 1"
+
+#: templates/products/checkout.html:47
+msgid "القليوبية"
+msgstr "Qalyubia"
+
+#: templates/products/checkout.html:49
+msgid "المنطقة الثانية"
+msgstr "Zone 2"
+
+#: templates/products/checkout.html:50
+msgid "القاهرة"
+msgstr "Cairo"
+
+#: templates/products/checkout.html:51
+msgid "الجيزة"
+msgstr "Giza"
+
+#: templates/products/checkout.html:52
+msgid "الإسكندرية"
+msgstr "Alexandria"
+
+#: templates/products/checkout.html:53
+msgid "الشرقية"
+msgstr "Sharqia"
+
+#: templates/products/checkout.html:54
+msgid "المنوفية"
+msgstr "Monufia"
+
+#: templates/products/checkout.html:55
+msgid "الغربية"
+msgstr "Gharbia"
+
+#: templates/products/checkout.html:56
+msgid "الدقهلية"
+msgstr "Dakahlia"
+
+#: templates/products/checkout.html:57
+msgid "بورسعيد"
+msgstr "Port Said"
+
+#: templates/products/checkout.html:58
+msgid "السويس"
+msgstr "Suez"
+
+#: templates/products/checkout.html:59
+msgid "الإسماعيلية"
+msgstr "Ismailia"
+
+#: templates/products/checkout.html:60
+msgid "دمياط"
+msgstr "Damietta"
+
+#: templates/products/checkout.html:61
+msgid "كفر الشيخ"
+msgstr "Kafr El Sheikh"
+
+#: templates/products/checkout.html:62
+msgid "البحيرة"
+msgstr "Beheira"
+
+#: templates/products/checkout.html:64
+msgid "المنطقة الثالثة (الصعيد)"
+msgstr "Zone 3 (Upper Egypt)"
+
+#: templates/products/checkout.html:65
+msgid "الفيوم"
+msgstr "Fayoum"
+
+#: templates/products/checkout.html:66
+msgid "بني سويف"
+msgstr "Beni Suef"
+
+#: templates/products/checkout.html:67
+msgid "المنيا"
+msgstr "Minya"
+
+#: templates/products/checkout.html:68
+msgid "أسيوط"
+msgstr "Assiut"
+
+#: templates/products/checkout.html:69
+msgid "سوهاج"
+msgstr "Sohag"
+
+#: templates/products/checkout.html:70
+msgid "قنا"
+msgstr "Qena"
+
+#: templates/products/checkout.html:71
+msgid "الأقصر"
+msgstr "Luxor"
+
+#: templates/products/checkout.html:72
+msgid "أسوان"
+msgstr "Aswan"
+
+#: templates/products/checkout.html:74
+msgid "المنطقة الرابعة (الحدودية)"
+msgstr "Zone 4 (Border)"
+
+#: templates/products/checkout.html:75
+msgid "البحر الأحمر"
+msgstr "Red Sea"
+
+#: templates/products/checkout.html:76
+msgid "مطروح"
+msgstr "Matrouh"
+
+#: templates/products/checkout.html:77
+msgid "الوادي الجديد"
+msgstr "New Valley"
+
+#: templates/products/checkout.html:78
+msgid "شمال سيناء"
+msgstr "North Sinai"
+
+#: templates/products/checkout.html:79
+msgid "جنوب سيناء"
+msgstr "South Sinai"
+
+#: templates/products/checkout.html:85
+msgid "المدينة أو المركز"
+msgstr "City or District"
+
+#: templates/products/checkout.html:86
+msgid "مثال: مدينة نصر، المنصورة"
+msgstr "Example: Nasr City, Mansoura"
+
+#: templates/products/checkout.html:91
+msgid "العنوان بالتفصيل"
+msgstr "Detailed Address"
+
+#: templates/products/checkout.html:92
+msgid "اسم الشارع، رقم العمارة، الدور، رقم الشقة..."
+msgstr "Street name, Building no, Floor, Apartment no..."
+
+#: templates/products/checkout.html:99
+msgid "طريقة الدفع"
+msgstr "Payment Method"
+
+#: templates/products/checkout.html:102
+msgid "الدفع نقداً عند الاستلام"
+msgstr "Cash on Delivery"
+
+#: templates/products/checkout.html:103
+msgid "الدفع إلكترونياً (قريباً)"
+msgstr "Online Payment (Coming Soon)"
+
+#: templates/products/checkout.html:104
+msgid "المحافظ الإلكترونية (قريباً)"
+msgstr "E-Wallets (Coming Soon)"
+
+#: templates/products/checkout.html:105
+msgid "دفع InstaPay تلقائي (قريباً)"
+msgstr "Auto InstaPay (Coming Soon)"
+
+#: templates/products/checkout.html:106
+msgid "تحويل فودافون كاش (يدوي - برفع إيصال)"
+msgstr "Vodafone Cash Transfer (Manual - Receipt Upload)"
+
+#: templates/products/checkout.html:107
+msgid "تحويل InstaPay (يدوي - برفع إيصال)"
+msgstr "InstaPay Transfer (Manual - Receipt Upload)"
+
+#: templates/products/checkout.html:112
+msgid "بيانات التحويل"
+msgstr "Transfer Details"
+
+#: templates/products/checkout.html:117
+msgid "صورة إثبات التحويل (سكرين شوت):"
+msgstr "Transfer Proof (Screenshot):"
+
+#: templates/products/checkout.html:121
+msgid "تأكيد الطلب"
+msgstr "Confirm Order"
+
+#: templates/products/checkout.html:126
+msgid "هل لديك كود خصم؟"
+msgstr "Do you have a discount code?"
+
+#: templates/products/checkout.html:130
+msgid "أدخل الكود هنا..."
+msgstr "Enter code here..."
+
+#: templates/products/checkout.html:131
+msgid "تفعيل"
+msgstr "Apply"
+
+#: templates/products/checkout.html:137
+msgid "وفرت:"
+msgstr "You Saved:"
+
+#: templates/products/checkout.html:141
+msgid "المنتجات"
+msgstr "Products"
+
+#: templates/products/checkout.html:147
+msgid "الكمية:"
+msgstr "Quantity:"
+
+#: templates/products/checkout.html:156
+msgid "سعر المنتجات:"
+msgstr "Products Price:"
+
+#: templates/products/checkout.html:160
+msgid "تكلفة الشحن:"
+msgstr "Shipping Cost:"
+
+#: templates/products/checkout.html:161
+msgid "اختر المحافظة"
+msgstr "Select Governorate"
+
+#: templates/products/checkout.html:164 templates/products/my_orders.html:104
+msgid "الإجمالي النهائي:"
+msgstr "Grand Total:"
+
+#: templates/products/checkout.html:170
+msgid "الدفع آمن ومشفر بالكامل"
+msgstr "Secure and Encrypted Payment"
+
+#: templates/products/checkout.html:178
+msgid "جاري تجهيز الدفع الآمن..."
+msgstr "Preparing secure payment..."
+
+#: templates/products/checkout.html:179
+msgid "يرجى عدم إغلاق أو تحديث الصفحة"
+msgstr "Please do not close or refresh the page"
+
+#: templates/products/dashboard/dashboard_form.html:151
+#, fuzzy
+#| msgid "الإتجاهات العطرية (النوتات)"
+msgid "النوتات العطرية للمنتج (Accords)"
+msgstr "Fragrance Notes"
+
+#: templates/products/home.html:8
+msgid "LUXURY PERFUMES"
+msgstr "LUXURY PERFUMES"
+
+#: templates/products/home.html:9
+msgid ""
+"اكتشف تشكيلتنا الحصرية من العطور الفاخرة التي تعكس شخصيتك وتدوم طويلاً، مصممة "
+"خصيصاً لأصحاب الذوق الرفيع."
+msgstr ""
+"Discover our exclusive collection of luxury perfumes that reflect your "
+"personality and last long, designed specifically for those with refined "
+"taste."
+
+#: templates/products/home.html:11
+msgid "تسوق التشكيلة الآن"
+msgstr "Shop the Collection Now"
+
+#: templates/products/home.html:20
+msgid "أحدث العطور"
+msgstr "Latest Perfumes"
+
+#: templates/products/home.html:35 templates/products/home.html:77
+#: templates/products/partials/product_grid.html:13
+#: templates/products/shop_base.html:490
+msgid "المفضلة"
+msgstr "Wishlist"
+
+#: templates/products/home.html:47 templates/products/home.html:89
+#: templates/products/partials/product_grid.html:25
+#: templates/products/wishlist.html:44
+msgid "التفاصيل"
+msgstr "Details"
+
+#: templates/products/home.html:53 templates/products/home.html:95
+#: templates/products/wishlist.html:50
+msgid "للسلة"
+msgstr "Add to Cart"
+
+#: templates/products/home.html:62
+msgid "الأكثر مبيعاً"
+msgstr "Best Sellers"
+
+#: templates/products/login.html:8 templates/products/login.html:39
+#: templates/products/register.html:52
+msgid "تسجيل الدخول"
+msgstr "Login"
+
+#: templates/products/login.html:9
+msgid "مرحباً بك مجدداً في متجرك الفاخر"
+msgstr ""
+
+#: templates/products/login.html:22
+msgid "اسم المستخدم"
+msgstr "Username"
+
+#: templates/products/login.html:27
+msgid "كلمة المرور"
+msgstr "Password"
+
+#: templates/products/login.html:43
+msgid "ليس لديك حساب بعد؟"
+msgstr "Don't have an account yet?"
+
+#: templates/products/login.html:45 templates/products/register.html:8
+msgid "إنشاء حساب جديد"
+msgstr "Create a New Account"
+
+#: templates/products/my_orders.html:12
+msgid "طلباتي السابقة"
+msgstr "My Past Orders"
+
+#: templates/products/my_orders.html:25
+msgid "طلب رقم"
+msgstr "Order ID"
+
+#: templates/products/my_orders.html:49
+msgid "تاريخ الطلب:"
+msgstr "Order Date:"
+
+#: templates/products/my_orders.html:58
+#: templates/products/order_success.html:18
+msgid "طريقة الدفع:"
+msgstr "Payment Method:"
+
+#: templates/products/my_orders.html:72
+msgid "المحافظة:"
+msgstr "Governorate:"
+
+#: templates/products/my_orders.html:87
+msgid "حالة الدفع:"
+msgstr "Payment Status:"
+
+#: templates/products/my_orders.html:95
+msgid "قيد الانتظار"
+msgstr "Pending"
+
+#: templates/products/my_orders.html:117
+msgid "ليس لديك أي طلبات سابقة حتى الآن."
+msgstr "You don't have any past orders yet."
+
+#: templates/products/my_orders.html:123
+msgid "ابدأ التسوق الآن"
+msgstr "Start Shopping Now"
+
+#: templates/products/order_success.html:11
+msgid "تم استلام طلبك بنجاح!"
+msgstr "Your order has been received successfully!"
+
+#: templates/products/order_success.html:12
+msgid "شكراً لتسوقك معنا. نحن نقوم بتجهيز طلبك الآن بعناية فائقة."
+msgstr ""
+"Thank you for shopping with us. We are carefully processing your order now."
+
+#: templates/products/order_success.html:16
+msgid "رقم الطلب:"
+msgstr "Order ID:"
+
+#: templates/products/order_success.html:19
+msgid "حالة الطلب:"
+msgstr "Order Status:"
+
+#: templates/products/order_success.html:19
+msgid "قيد المراجعة / التجهيز"
+msgstr "Under Review / Processing"
+
+#: templates/products/order_success.html:28
+msgid "الدفع عند الاستلام"
+msgstr "Cash on Delivery"
+
+#: templates/products/order_success.html:31
+msgid "سيتم تحصيل مبلغ"
+msgstr "An amount of"
+
+#: templates/products/order_success.html:31
+msgid "بواسطة مندوب الشحن عند تسليم الطلب لك. يرجى تجهيز المبلغ."
+msgstr ""
+"will be collected by the courier upon delivery. Please prepare the amount."
+
+#: templates/products/order_success.html:38
+msgid "جاري مراجعة الإيصال"
+msgstr "Reviewing Receipt"
+
+#: templates/products/order_success.html:41
+msgid "لقد استلمنا صورة التحويل بنجاح وتم فحصها مبدئياً."
+msgstr ""
+"We have received the transfer screenshot and it has been initially checked."
+
+#: templates/products/order_success.html:43
+msgid ""
+"فريقنا يقوم بالمراجعة النهائية للإيصال، وسنتواصل معك قريباً لتأكيد الشحن."
+msgstr ""
+"Our team is doing a final review of the receipt, and we will contact you "
+"soon to confirm shipping."
+
+#: templates/products/order_success.html:53
+msgid "متابعة طلباتي"
+msgstr "Track My Orders"
+
+#: templates/products/order_success.html:57 templates/products/wishlist.html:70
+msgid "العودة للمتجر"
+msgstr "Back to Store"
+
+#: templates/products/partials/product_grid.html:31
+#: templates/products/product_detail.html:280
+#: templates/products/product_detail.html:283
+#: templates/products/product_detail.html:286
+msgid "أضف للسلة"
+msgstr "Add to Cart"
+
+#: templates/products/partials/product_grid.html:42
+msgid "لا توجد منتجات تطابق بحثك حالياً."
+msgstr "No products match your search right now."
+
+#: templates/products/partials/product_grid.html:50
+msgid "السابق"
+msgstr "Previous"
+
+#: templates/products/partials/product_grid.html:53
+msgid "صفحة"
+msgstr "Page"
+
+#: templates/products/partials/product_grid.html:53
+msgid "من"
+msgstr "of"
+
+#: templates/products/partials/product_grid.html:56
+msgid "التالي"
+msgstr "Next"
+
+#: templates/products/product_detail.html:120
+msgid "لا توجد صورة للمنتج"
+msgstr "No product image"
+
+#: templates/products/product_detail.html:155
+#: templates/products/wishlist.html:34
+msgid "عطر رجالي"
+msgstr "Men's Perfume"
+
+#: templates/products/product_detail.html:156
+#: templates/products/wishlist.html:35
+msgid "عطر نسائي"
+msgstr "Women's Perfume"
+
+#: templates/products/product_detail.html:157
+#: templates/products/wishlist.html:36
+msgid "عطر للجنسين"
+msgstr "Unisex Perfume"
+
+#: templates/products/product_detail.html:178
+#: templates/products/product_detail.html:183
+#: templates/products/product_detail.html:190
+#: templates/products/product_detail.html:195
+#: templates/products/product_detail.html:202
+#: templates/products/product_detail.html:207
+msgid "مل"
+msgstr "ML"
+
+#: templates/products/product_detail.html:181
+#: templates/products/product_detail.html:193
+#: templates/products/product_detail.html:205
+msgid "غير متوفر"
+msgstr "Unavailable"
+
+#: templates/products/product_detail.html:215
+msgid "متوفر في المخزون"
+msgstr "In Stock"
+
+#: templates/products/product_detail.html:217
+msgid "نفد مؤقتاً"
+msgstr "Temporarily Out of Stock"
+
+#: templates/products/product_detail.html:223
+msgid "وصف العطر"
+msgstr "Fragrance Description"
+
+#: templates/products/product_detail.html:233
+msgid "الهرم العطري (التركيبة)"
+msgstr "Fragrance Pyramid (Composition)"
+
+#: templates/products/product_detail.html:262
+msgid "🎁 هذه الباقة تحتوي على:"
+msgstr "🎁 This bundle contains:"
+
+#: templates/products/product_detail.html:281
+#: templates/products/product_detail.html:284
+#: templates/products/product_detail.html:287
+msgid "اشترِ الآن"
+msgstr "Buy Now"
+
+#: templates/products/product_detail.html:290
+msgid "غير متوفر حالياً"
+msgstr "Currently Unavailable"
+
+#: templates/products/product_detail.html:301
+msgid "عطور من نفس العائلة"
+msgstr "Perfumes from the same family"
+
+#: templates/products/product_detail.html:320
+msgid "تقييمات المستخدمين"
+msgstr "Customer Reviews"
+
+#: templates/products/product_detail.html:325
+msgid "أعشق"
+msgstr "Love"
+
+#: templates/products/product_detail.html:326
+msgid "أحب"
+msgstr "Like"
+
+#: templates/products/product_detail.html:327
+msgid "مقبول"
+msgstr "OK"
+
+#: templates/products/product_detail.html:337
+msgid "لا توجد تقييمات بعد. كن أول من يقيّم!"
+msgstr "No reviews yet. Be the first to review!"
+
+#: templates/products/product_detail.html:346
+msgid "إرسال التقييم"
+msgstr "Submit Review"
+
+#: templates/products/product_list.html:14
+#: templates/products/user_product_list.html:15
+msgid "ابحث عن عطر أو مكونات..."
+msgstr "Search for a perfume or ingredients..."
+
+#: templates/products/product_list.html:18
+#: templates/products/user_product_list.html:19
+msgid "الكل"
+msgstr "All"
+
+#: templates/products/product_list.html:19
+#: templates/products/user_product_list.html:20
+msgid "رجالي"
+msgstr "Men"
+
+#: templates/products/product_list.html:20
+#: templates/products/user_product_list.html:21
+msgid "نسائي"
+msgstr "Women"
+
+#: templates/products/product_list.html:21
+#: templates/products/user_product_list.html:22
+msgid "للجنسين"
+msgstr "Unisex"
+
+#: templates/products/product_list.html:26
+#: templates/products/user_product_list.html:27
+msgid "الترتيب الافتراضي"
+msgstr "Default Sort"
+
+#: templates/products/product_list.html:27
+#: templates/products/user_product_list.html:28
+msgid "الأرخص أولاً"
+msgstr "Price: Low to High"
+
+#: templates/products/product_list.html:28
+#: templates/products/user_product_list.html:29
+msgid "الأغلى أولاً"
+msgstr "Price: High to Low"
+
+#: templates/products/register.html:9
+msgid "انضم إلينا واستمتع بتجربة تسوق فاخرة"
+msgstr ""
+
+#: templates/products/register.html:46
+msgid "تسجيل حساب"
+msgstr "Register Account"
+
+#: templates/products/register.html:50
+msgid "لديك حساب بالفعل؟"
+msgstr "Already have an account?"
+
+#: templates/products/shop_base.html:414
+msgid "مرحباً متجر العطور، لدي استفسار..."
+msgstr "Hello Perfume Store, I have an inquiry..."
+
+#: templates/products/shop_base.html:414
+msgid "تواصل معنا"
+msgstr "Contact Us"
+
+#: templates/products/shop_base.html:473
+msgid "الرئيسية"
+msgstr "Home"
+
+#: templates/products/shop_base.html:478
+msgid "المتجر"
+msgstr "Shop"
+
+#: templates/products/shop_base.html:494
+msgid "طلباتي"
+msgstr "My Orders"
+
+#: templates/products/shop_base.html:507
+msgid "تسجيل خروج"
+msgstr "Logout"
+
+#: templates/products/shop_base.html:512
+msgid "تسجيل دخول"
+msgstr "Login"
+
+#: templates/products/update_product.html:4
+msgid "تعديل المنتج | لوحة التحكم"
+msgstr "Edit Product | Dashboard"
+
+#: templates/products/update_product.html:13
+msgid "تعديل بيانات العطر"
+msgstr "Edit Perfume Details"
+
+#: templates/products/update_product.html:32
+msgid "حذف الصورة الحالية"
+msgstr "Delete Current Image"
+
+#: templates/products/update_product.html:42
+msgid "حذف الصورة الثانية"
+msgstr "Delete Second Image"
+
+#: templates/products/update_product.html:52
+msgid "حذف الصورة الثالثة"
+msgstr "Delete Third Image"
+
+#: templates/products/update_product.html:135
+msgid "يمكنك تحديد أكثر من صورة في نفس الوقت."
+msgstr "You can select multiple images at once."
+
+#: templates/products/update_product.html:148
+msgid "اسم النوتة (مثل: عود)"
+msgstr "Note Name (e.g., Oud)"
+
+#: templates/products/update_product.html:161
+msgid "إضافة اتجاه عطري جديد"
+msgstr "Add New Fragrance Note"
+
+#: templates/products/update_product.html:166
+msgid "حفظ التعديلات"
+msgstr "Save Changes"
+
+#: templates/products/wishlist.html:10
+msgid "قائمة المفضلة"
+msgstr "Wishlist"
+
+#: templates/products/wishlist.html:12
+msgid "عطورك المفضلة التي قمت بحفظها لشرائها لاحقاً"
+msgstr "Your favorite perfumes saved to buy later"
+
+#: templates/products/wishlist.html:25
+msgid "إزالة من المفضلة"
+msgstr "Remove from Wishlist"
+
+#: templates/products/wishlist.html:62
+msgid "قائمة المفضلة فارغة"
+msgstr "Wishlist is empty"
+
+#: templates/products/wishlist.html:63
+msgid "تصفح المتجر واضغط على القلب بجانب العطور التي تعجبك لحفظها هنا."
+msgstr ""
+"Browse the shop and click the heart next to perfumes you like to save them "
+"here."
+
+#~ msgid "نجوم"
+#~ msgstr "Stars"
+
+#~ msgid "نجمة"
+#~ msgstr "Star"
+
+#~ msgid "ما تقييمك لهذا العطر؟"
+#~ msgstr "What is your rating for this perfume?"
+
+#~ msgid "تنبيه"
+#~ msgstr "Notification"
+
+#~ msgid "عذراً!"
+#~ msgstr "Oops!"
+
+#~ msgid "نجاح!"
+#~ msgstr "Success!"

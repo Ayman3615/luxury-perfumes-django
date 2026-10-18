@@ -1,0 +1,75 @@
+{% extends 'products/shop_base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="filter-container hidden-reveal">
+    <h1>
+        <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" fill="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        {% trans "قائمة المفضلة" %}
+    </h1>
+    <p>{% trans "عطورك المفضلة التي قمت بحفظها لشرائها لاحقاً" %}</p>
+</div>
+
+<div class="products-grid modern-grid">
+    {% for item in wishlist_items %}
+        <div class="product-card hidden-reveal" style="transition-delay: 0.{{ forloop.counter0|default:0|slice:'0:1' }}s;">
+            <div class="image-wrapper">
+                {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="product-image" loading="lazy">
+                {% else %}
+                    <div class="product-image" style="background: var(--bg-color); display:flex; align-items:center; justify-content:center; color: var(--text-color);">{% trans "بدون صورة" %}</div>
+                {% endif %}
+
+                <a href="{% url 'toggle_wishlist' item.product.id %}" class="heart-btn" title="{% trans 'إزالة من المفضلة' %}">
+                    <svg class="heart-svg active" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="product-info">
+                <div style="color: var(--gold); font-size: 11px; font-weight: bold; margin-bottom: 5px;">
+                    {% if item.product.category == 'men' %} {% trans "عطر رجالي" %}
+                    {% elif item.product.category == 'women' %} {% trans "عطر نسائي" %}
+                    {% else %} {% trans "عطر للجنسين" %}
+                    {% endif %}
+                </div>
+
+                <h3 class="product-title">{{ item.product.name }}</h3>
+                <div class="product-price">{{ item.product.price }} {% trans "ج.م" %}</div>
+
+                <div class="card-actions">
+                    <a href="{% url 'product_detail' item.product.id %}" class="card-btn btn-details">{% trans "التفاصيل" %}</a>
+                    <a href="{% url 'add_to_cart' item.product.id %}" class="card-btn btn-add">
+                        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        {% trans "للسلة" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="empty-state hidden-reveal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            <h3>{% trans "قائمة المفضلة فارغة" %}</h3>
+            <p>{% trans "تصفح المتجر واضغط على القلب بجانب العطور التي تعجبك لحفظها هنا." %}</p>
+
+            <a href="{% url 'user_product_list' %}" class="btn-primary-custom">
+                <svg class="return-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                {% trans "العودة للمتجر" %}
+            </a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

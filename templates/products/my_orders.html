@@ -1,0 +1,129 @@
+{% extends 'products/shop_base.html' %}
+{% load i18n %}
+{% block content %}
+
+<div class="orders-wrapper">
+    <h2 class="orders-header hidden-reveal">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        {% trans "طلباتي السابقة" %}
+    </h2>
+
+    {% if orders %}
+        {% for order in orders %}
+        <div class="order-card hidden-reveal" style="transition-delay: 0.{{ forloop.counter0|default:0|slice:'0:1' }}s;">
+            <!-- هيدر الطلب (الرقم والحالة) -->
+            <div class="order-header-row">
+                <div class="order-id">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 11 12 14 22 4"></polyline>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    {% trans "طلب رقم" %} #{{ order.id }}
+                </div>
+
+                <!-- 🎨 هنا ضفنا الألوان الديناميكية لحالة الطلب -->
+                <div class="order-status-badge
+                    {% if order.status == 'pending' %} status-pending
+                    {% elif order.status == 'processing' %} status-processing
+                    {% elif order.status == 'shipped' %} status-shipped
+                    {% elif order.status == 'delivered' %} status-delivered
+                    {% elif order.status == 'cancelled' %} status-cancelled
+                    {% endif %}">
+                    <!-- إجبار جانجو على ترجمة حالة الطلب -->
+                    {% with order_status=order.get_status_display|default:order.status %}
+                        {% trans order_status %}
+                    {% endwith %}
+                </div>
+            </div>
+
+            <!-- تفاصيل الطلب -->
+            <div class="order-details-grid">
+                <!-- تاريخ الطلب -->
+                <div class="detail-item">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <div class="detail-text">
+                        <span class="label">{% trans "تاريخ الطلب:" %}</span>
+                        <span class="value">{{ order.created_at|date:"Y-m-d" }} | {{ order.created_at|date:"H:i" }}</span>
+                    </div>
+                </div>
+
+                <!-- طريقة الدفع -->
+                <div class="detail-item">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    <div class="detail-text">
+                        <span class="label">{% trans "طريقة الدفع:" %}</span>
+                        <span class="value">
+                            <!-- إجبار جانجو على ترجمة طريقة الدفع -->
+                            {% with pay_method=order.get_payment_method_display|default:order.payment_method %}
+                                {% trans pay_method %}
+                            {% endwith %}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- المحافظة -->
+                <div class="detail-item">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <div class="detail-text">
+                        <span class="label">{% trans "المحافظة:" %}</span>
+                        <span class="value">{{ order.city|title }}</span>
+                    </div>
+                </div>
+
+                <!-- 🎨 هنا ضفنا الألوان الديناميكية لحالة الدفع -->
+                <!-- 🎨 هنا ضفنا الألوان الديناميكية لحالة الدفع -->
+                <div class="detail-item
+                    {% if order.payment_status == 'completed' or order.payment_status == 'paid' or order.payment_status == 'accepted' or order.payment_status == 'مقبول' %} payment-accepted
+                    {% elif order.payment_status == 'failed' or order.payment_status == 'rejected' or order.payment_status == 'مرفوض' %} payment-rejected
+                    {% else %} payment-review
+                    {% endif %}">
+
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    <div class="detail-text">
+                        <span class="label">{% trans "حالة الدفع:" %}</span>
+                        <span class="value">
+                            {% if order.payment_status %}
+                                <!-- إجبار جانجو على ترجمة حالة الدفع -->
+                                {% with pay_status=order.get_payment_status_display|default:order.payment_status %}
+                                    {% trans pay_status %}
+                                {% endwith %}
+                            {% else %}
+                                {% trans "قيد الانتظار" %}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- إجمالي الطلب -->
+            <div class="order-footer">
+                <span class="footer-label">{% trans "الإجمالي النهائي:" %}</span>
+                <span class="footer-total">{{ order.total_price }} {% trans "ج.م" %}</span>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <!-- في حالة عدم وجود طلبات -->
+        <div class="empty-orders hidden-reveal">
+            <svg class="empty-orders-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <p style="font-size: 1.2rem; font-weight: 700; margin-bottom: 25px; opacity: 0.9;">{% trans "ليس لديك أي طلبات سابقة حتى الآن." %}</p>
+            <a href="{% url 'user_product_list' %}" class="btn-primary-custom" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 30px; border-radius: 30px;">
+                <svg class="return-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                {% trans "ابدأ التسوق الآن" %}
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

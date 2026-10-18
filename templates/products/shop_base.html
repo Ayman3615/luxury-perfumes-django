@@ -1,0 +1,639 @@
+{% load i18n static %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>{% block title %}Luxury Perfumes{% endblock %}</title>
+
+    <!-- أيقونة التبويب (لإلغاء خطأ favicon.ico) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <link rel="stylesheet" href="{% static 'products/style.css' %}?v=9" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {% block extra_css %}{% endblock %}
+
+    <style>
+      /* ضمان ظهور جميع عناصر الموقع وعدم اختفائها بسبب hidden-reveal */
+      .hidden-reveal {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+      }
+
+      /* ========================================== */
+      /* 🔔 تنسيق الإشعار العائم الاحترافي (Floating Popup) */
+      /* ========================================== */
+      .luxury-swal-popup {
+        border-radius: 50px !important;
+        padding: 12px 24px !important;
+        border: 1.5px solid rgba(212, 175, 55, 0.5) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        font-family: 'Cairo', 'Poppins', sans-serif !important;
+        width: auto !important;
+        max-width: 92vw !important;
+        margin-bottom: 75px !important; /* يرتفع فوق البار السفلي في الموبايل */
+      }
+
+      [data-theme="light"] .luxury-swal-popup {
+        background: rgba(255, 255, 255, 0.96) !important;
+        color: #1a1a1a !important;
+      }
+
+      [data-theme="dark"] .luxury-swal-popup {
+        background: rgba(22, 22, 22, 0.96) !important;
+        color: #ffffff !important;
+      }
+
+      .luxury-swal-title {
+        font-size: 14.5px !important;
+        font-weight: 700 !important;
+        margin: 0 !important;
+        line-height: 1.5 !important;
+      }
+
+      /* ========================================== */
+      /* 🌟 التنسيقات الإجبارية للناف بار العلوي 🌟 */
+      /* ========================================== */
+      body {
+        padding-top: 85px !important;
+      }
+
+      .glass-navbar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 70px !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 0 15px !important;
+        z-index: 9999999 !important;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+      }
+
+      [data-theme="light"] .glass-navbar {
+        background: rgba(255, 255, 255, 0.95) !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+      }
+      [data-theme="dark"] .glass-navbar {
+        background: rgba(17, 17, 17, 0.95) !important;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.2) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+      }
+
+      .nav-group {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        height: 100% !important;
+        margin: 0 !important;
+      }
+
+      .brand-logo {
+        font-family: 'Poppins', 'Cairo', sans-serif !important;
+        font-size: 20px !important;
+        font-weight: 800 !important;
+        color: #d4af37 !important;
+        text-decoration: none !important;
+        margin: 0 !important;
+        display: block !important;
+        line-height: 1 !important;
+      }
+
+      .lang-form {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 42px !important;
+      }
+
+      .circle-btn {
+        width: 42px !important;
+        height: 42px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: rgba(128, 128, 128, 0.08) !important;
+        border: 1px solid rgba(128, 128, 128, 0.15) !important;
+        color: inherit !important;
+        text-decoration: none !important;
+        font-weight: 700 !important;
+        font-size: 10px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .circle-btn:hover, .circle-btn:active {
+        background: rgba(212, 175, 55, 0.2) !important;
+        border-color: #d4af37 !important;
+        color: #d4af37 !important;
+      }
+
+      .circle-btn svg {
+        width: 22px !important;
+        height: 22px !important;
+        display: block !important;
+        margin: 0 !important;
+      }
+
+      .cart-badge {
+        position: absolute !important;
+        top: -4px !important;
+        right: -4px !important;
+        background: #e74c3c !important;
+        color: #ffffff !important;
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        width: 20px !important;
+        height: 20px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 50% !important;
+        border: 2px solid #ffffff !important;
+        line-height: 1 !important;
+        box-sizing: border-box !important;
+      }
+      [data-theme="dark"] .cart-badge {
+        border-color: #111111 !important;
+      }
+
+      /* ========================================== */
+      /* 📱 البار السفلي والقائمة المنبثقة للموبايل */
+      /* ========================================== */
+      .mobile-bottom-nav {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding-bottom: 85px !important;
+        }
+
+        /* 🚫 إخفاء الثلاث شرط اللي فوق تماماً على الموبايل */
+        #hamburger {
+          display: none !important;
+        }
+
+        .whatsapp-float {
+          bottom: 82px !important;
+        }
+
+        /* قائمة الثلاث شرط تفتح من تحت لفوق فوق البار السفلي مباشرة */
+        #nav-links {
+          position: fixed !important;
+          bottom: 72px !important;
+          top: auto !important;
+          left: 12px !important;
+          right: 12px !important;
+          width: auto !important;
+          max-height: 70vh !important;
+          overflow-y: auto !important;
+          border-radius: 22px !important;
+          padding: 12px !important;
+          z-index: 9999997 !important;
+          display: none !important;
+          flex-direction: column !important;
+          gap: 6px !important;
+          transform: none !important;
+          transition: all 0.25s ease !important;
+        }
+
+        [data-theme="light"] #nav-links {
+          background: rgba(255, 255, 255, 0.98) !important;
+          box-shadow: 0 -10px 35px rgba(0, 0, 0, 0.15) !important;
+          border: 1px solid rgba(212, 175, 55, 0.3) !important;
+        }
+
+        [data-theme="dark"] #nav-links {
+          background: rgba(22, 22, 22, 0.98) !important;
+          box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.75) !important;
+          border: 1px solid rgba(212, 175, 55, 0.35) !important;
+        }
+
+        /* إظهار القائمة عند الضغط على زر المزيد السفلي */
+        #nav-links.mobile-menu-open,
+        #nav-links.active {
+          display: flex !important;
+        }
+
+        #nav-links a,
+        #nav-links button.theme-toggle {
+          padding: 12px 16px !important;
+          border-radius: 12px !important;
+          display: flex !important;
+          align-items: center !important;
+          gap: 12px !important;
+          font-size: 15px !important;
+          font-weight: 700 !important;
+          text-decoration: none !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+        }
+
+        [data-theme="light"] #nav-links a:hover {
+          background: rgba(212, 175, 55, 0.1) !important;
+        }
+        [data-theme="dark"] #nav-links a:hover {
+          background: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        /* تصميم البار السفلي */
+        .mobile-bottom-nav {
+          display: flex !important;
+          flex-direction: row !important;
+          justify-content: space-around !important;
+          align-items: center !important;
+          position: fixed !important;
+          bottom: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          width: 100% !important;
+          height: 65px !important;
+          z-index: 9999998 !important;
+          padding: 0 5px !important;
+          padding-bottom: env(safe-area-inset-bottom) !important;
+          border-top-left-radius: 20px !important;
+          border-top-right-radius: 20px !important;
+          box-sizing: border-box !important;
+          backdrop-filter: blur(15px);
+          -webkit-backdrop-filter: blur(15px);
+        }
+
+        [data-theme="light"] .mobile-bottom-nav {
+          background: rgba(255, 255, 255, 0.98) !important;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08) !important;
+          border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+        }
+        [data-theme="dark"] .mobile-bottom-nav {
+          background: rgba(18, 18, 18, 0.98) !important;
+          box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.6) !important;
+          border-top: 1px solid rgba(212, 175, 55, 0.2) !important;
+        }
+
+        .bottom-nav-item {
+          flex: 1 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: center !important;
+          justify-content: center !important;
+          text-decoration: none !important;
+          font-family: 'Cairo', 'Poppins', sans-serif !important;
+          font-size: 11px !important;
+          font-weight: 700 !important;
+          gap: 4px !important;
+          height: 100% !important;
+          transition: all 0.25s ease !important;
+          position: relative !important;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        [data-theme="light"] .bottom-nav-item {
+          color: #555555 !important;
+        }
+        [data-theme="dark"] .bottom-nav-item {
+          color: #bbbbbb !important;
+        }
+
+        .bottom-nav-item i {
+          font-size: 19px !important;
+          transition: transform 0.25s ease, color 0.25s ease !important;
+        }
+
+        .bottom-nav-item.active,
+        .bottom-nav-item:hover {
+          color: #d4af37 !important;
+        }
+
+        .bottom-nav-item.active i {
+          transform: translateY(-2px) !important;
+        }
+
+        /* الدائرة البارزة في المنتصف (اللوجو الخاص بك) */
+        .bottom-nav-center {
+          flex: 1 !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          position: relative !important;
+          height: 100% !important;
+        }
+
+        .center-floating-btn {
+          position: absolute !important;
+          top: -28px !important;
+          width: 66px !important;
+          height: 66px !important;
+          border-radius: 50% !important;
+          padding: 0 !important; /* بدون أي حواف داخلية عشان الصورة تفرش للأخر */
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          text-decoration: none !important;
+          transition: all 0.3s ease !important;
+          overflow: hidden !important;
+          box-sizing: border-box !important;
+          border: 2.5px solid #d4af37 !important;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+
+
+        [data-theme="light"] .center-floating-btn {
+          background-color: #000000 !important;
+          color: #d4af37 !important;
+          border: 2.5px solid #d4af37 !important;
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28) !important;
+        }
+
+        [data-theme="dark"] .center-floating-btn {
+          background-color: #000000 !important;
+          color: #d4af37 !important;
+          border: 2.5px solid #d4af37 !important;
+          box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3) !important;
+        }
+
+        .center-profile-img {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important; /* cover تجعل الصورة تأخذ الدائرة كاملة بدون حواف سوداء من فوق وتحت */
+          object-position: center !important;
+          border-radius: 50% !important;
+          display: block !important;
+          transform: scale(1.12) !important; /* تكبير محسوب لملء الدائرة بالكامل */
+        }
+
+
+        /* تنسيق احتياطي شيك جداً لو صورة اللوجو لسه مترفعتش */
+        .center-logo-fallback {
+          font-family: 'Poppins', sans-serif !important;
+          font-size: 18px !important;
+          font-weight: 800 !important;
+          color: #d4af37 !important;
+        }
+
+
+
+        .center-floating-btn.active,
+        .center-floating-btn:active {
+          transform: scale(0.95) translateY(-2px) !important;
+          border-color: #d4af37 !important;
+        }
+
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- زر الواتساب العائم -->
+    <a href="https://wa.me/201060660839?text={% trans 'مرحباً متجر العطور، لدي استفسار...' %}" target="_blank" class="whatsapp-float click-pulse" title="{% trans 'تواصل معنا' %}" style="z-index: 9999;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+      </svg>
+    </a>
+
+    <!-- ============================================== -->
+    <!-- 🌟 الناف بار العائم العلوي 🌟 -->
+    <!-- ============================================== -->
+    <nav class="glass-navbar">
+      <div class="nav-group">
+        <!-- زر الثلاث شرط العلوي يظهر على الكمبيوتر فقط ومخفي تماماً على الموبايل -->
+        <button class="circle-btn" id="hamburger" type="button" aria-label="Menu" style="border:none; background:transparent;">
+          <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <a href="{% url 'home' %}" class="brand-logo">luxury perfumes</a>
+      </div>
+
+      <div class="nav-group">
+        <form action="{% url 'set_language' %}" method="post" class="lang-form">
+          {% csrf_token %}
+          <input name="next" type="hidden" value="{{ request.get_full_path }}">
+          {% if 'ar' in LANGUAGE_CODE %}
+            <input name="language" type="hidden" value="en">
+            <button type="submit" class="circle-btn" title="English">EN</button>
+          {% else %}
+            <input name="language" type="hidden" value="ar">
+            <button type="submit" class="circle-btn" style="font-size: 16px;" title="عربي">ع</button>
+          {% endif %}
+        </form>
+
+        <a href="{% url 'cart' %}" class="circle-btn" style="position: relative;" aria-label="Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="cart-badge" id="cart-counter">{{ cart_count|default:"0" }}</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- القائمة التي تفتح من زر الثلاث شرط السفلي في الموبايل -->
+    <div class="overlay">
+      <div class="nav-links" id="nav-links">
+        <button class="theme-toggle click-pulse" id="theme-btn" style="width: 100%; justify-content: flex-start; background: transparent; border: none; font-family: inherit; font-size: 16px; color: inherit; cursor: pointer;">
+          <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <span class="dark-text">{% if 'en' in LANGUAGE_CODE %}Dark Mode{% else %}الوضع الليلي{% endif %}</span>
+
+          <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <span class="light-text">{% if 'en' in LANGUAGE_CODE %}Light Mode{% else %}الوضع النهاري{% endif %}</span>
+        </button>
+
+        <a href="{% url 'home' %}" class="click-pulse">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          {% trans "الرئيسية" %}
+        </a>
+
+        <a href="{% url 'user_product_list' %}" class="click-pulse">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v4H3z"></path><path d="M4 7v14h16V7"></path><path d="M9 11v6"></path><path d="M15 11v6"></path></svg>
+          {% trans "المتجر" %}
+        </a>
+
+        <!-- رابط مستشار العطور السحري -->
+        <a href="{% url 'ai_perfume_finder' %}" class="click-pulse" style="color: #d4af37; font-weight: 700;">
+          <i class="fa-solid fa-wand-magic-sparkles" style="width: 20px; text-align: center;"></i>
+          {% if 'en' in LANGUAGE_CODE %}AI Perfume Finder{% else %}مستشار العطور الذكي{% endif %}
+        </a>
+
+        {% if user.is_authenticated %}
+          <a href="{% url 'wishlist' %}" class="click-pulse">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            {% trans "المفضلة" %}
+          </a>
+          <a href="{% url 'my_orders' %}" class="click-pulse">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            {% trans "طلباتي" %}
+          </a>
+        {% endif %}
+
+        <!-- تواصل معنا -->
+        <a href="https://wa.me/201060660839" target="_blank" class="click-pulse">
+          <i class="fa-brands fa-whatsapp" style="width: 20px; text-align: center; color: #25d366; font-size: 18px;"></i>
+          {% if 'en' in LANGUAGE_CODE %}Contact Us{% else %}تواصل معنا{% endif %}
+        </a>
+
+        {% if user.is_authenticated %}
+          <a href="{% url 'logout' %}" class="logout-btn click-pulse" style="color: #e74c3c;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            {% trans "تسجيل خروج" %}
+          </a>
+        {% else %}
+          <a href="{% url 'login' %}" class="click-pulse" style="color: var(--gold, #d4af37);">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+            {% trans "تسجيل دخول" %}
+          </a>
+        {% endif %}
+      </div>
+
+      <main class="main-content container" style="flex-grow: 1; padding-bottom: 50px;">
+        {% if messages %}
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            {% for message in messages %}
+              let iconType = "info";
+              {% if message.tags == 'error' %} iconType = "error";
+              {% elif message.tags == 'success' %} iconType = "success";
+              {% elif message.tags == 'warning' %} iconType = "warning"; {% endif %}
+
+              Swal.fire({
+                icon: iconType,
+                /* استخدام html بدل text لحل مشكلة ظهور الرمز &#x27; في J'adore */
+                html: '<div class="luxury-swal-title">{{ message|escapejs }}</div>',
+                toast: true,
+                position: 'bottom', /* يطلع من تحت في نص الصفحة بشكل عائم وأنيق */
+                showConfirmButton: false,
+                timer: 3200,
+                timerProgressBar: true,
+                customClass: {
+                  popup: 'luxury-swal-popup'
+                }
+              });
+            {% endfor %}
+          });
+        </script>
+        {% endif %}
+
+        {% block content %} {% endblock %}
+      </main>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- 📱 البار السفلي للموبايل (Ana Vodafone Style) 📱 -->
+    <!-- ============================================== -->
+    <div class="mobile-bottom-nav">
+      <!-- 1. المتجر (Shop) - بدلاً من تكرار الرئيسية -->
+      <a href="{% url 'user_product_list' %}" class="bottom-nav-item {% if request.resolver_match.url_name == 'user_product_list' %}active{% endif %}">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span>{% if 'en' in LANGUAGE_CODE %}Shop{% else %}المتجر{% endif %}</span>
+      </a>
+
+      <!-- 2. مستشار العطور (AI Finder) -->
+      <a href="{% url 'ai_perfume_finder' %}" class="bottom-nav-item {% if request.resolver_match.url_name == 'ai_perfume_finder' %}active{% endif %}">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span>{% if 'en' in LANGUAGE_CODE %}AI Finder{% else %}مستشارك{% endif %}</span>
+      </a>
+
+      <!-- 3. الدائرة البارزة في المنتصف (لوجو عطور القدس -> يودي للرئيسية) -->
+      <div class="bottom-nav-center">
+        <a href="{% url 'home' %}" class="center-floating-btn {% if request.resolver_match.url_name == 'home' %}active{% endif %}" title="عطور القدس">
+          <img src="{% static 'products/images/logo.jpg.jpg' %}" alt="Luxury Perfumes" class="center-profile-img"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <span class="center-logo-fallback" style="display:none;">LP</span>
+        </a>
+      </div>
+
+      <!-- 4. حسابي / طلباتي (Profile / My Orders) -->
+      <a href="{% if user.is_authenticated %}{% url 'my_orders' %}{% else %}{% url 'login' %}{% endif %}"
+         class="bottom-nav-item {% if request.resolver_match.url_name == 'my_orders' or request.resolver_match.url_name == 'login' %}active{% endif %}">
+        <i class="fa-regular fa-user"></i>
+        <span>
+          {% if user.is_authenticated %}
+            {% if 'en' in LANGUAGE_CODE %}My Orders{% else %}حسابي{% endif %}
+          {% else %}
+            {% if 'en' in LANGUAGE_CODE %}Login{% else %}دخول{% endif %}
+          {% endif %}
+        </span>
+      </a>
+
+      <!-- 5. القائمة (Menu - الثلاث شرط السفلية) -->
+      <a href="javascript:void(0);" class="bottom-nav-item" id="mobileMoreBtn">
+        <i class="fa-solid fa-bars"></i>
+        <span>{% if 'en' in LANGUAGE_CODE %}Menu{% else %}القائمة{% endif %}</span>
+      </a>
+    </div>
+
+    <!-- استدعاء ملف الـ Javascript الخارجي -->
+    <script src="{% static 'products/script.js' %}?v=11" defer></script>
+    {% block extra_js %}{% endblock %}
+
+    <!-- سكريبت موحد ومستقل لفتح وإغلاق قائمة الثلاث شرط السفلية بدون أي تعارض -->
+    <script>
+      window.addEventListener("load", function () {
+        const moreBtn = document.getElementById("mobileMoreBtn");
+        const navLinks = document.getElementById("nav-links");
+        const overlay = document.querySelector(".menu-overlay");
+
+        if (moreBtn && navLinks) {
+          // إزالة أي أحداث قديمة مسجلة من script.js لمنع الفتح والقفل المزدوج
+          const cleanMoreBtn = moreBtn.cloneNode(true);
+          moreBtn.parentNode.replaceChild(cleanMoreBtn, moreBtn);
+
+          cleanMoreBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const isOpen = navLinks.classList.contains("mobile-menu-open");
+            if (isOpen) {
+              navLinks.classList.remove("active", "menu-active", "mobile-menu-open");
+              cleanMoreBtn.classList.remove("active");
+              if (overlay) overlay.classList.remove("active");
+            } else {
+              navLinks.classList.add("active", "menu-active", "mobile-menu-open");
+              cleanMoreBtn.classList.add("active");
+              if (overlay) overlay.classList.add("active");
+            }
+          });
+
+          // إغلاق القائمة عند الضغط خارجها
+          document.addEventListener("click", function (e) {
+            if (!navLinks.contains(e.target) && !cleanMoreBtn.contains(e.target)) {
+              navLinks.classList.remove("active", "menu-active", "mobile-menu-open");
+              cleanMoreBtn.classList.remove("active");
+              if (overlay) overlay.classList.remove("active");
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
+

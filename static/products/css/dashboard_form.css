@@ -1,0 +1,148 @@
+/* static/products/css/dashboard_form.css */
+
+.form-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--bg-card, #1a1a1a);
+  padding: 35px;
+  border-radius: 12px;
+  border: 1px solid var(--border, #333);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.form-container h2 {
+  color: var(--gold, #d4af37);
+  margin-top: 0;
+  margin-bottom: 30px;
+  text-align: center;
+  border-bottom: 1px solid var(--border, #333);
+  padding-bottom: 15px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  color: var(--gold, #d4af37);
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="email"],
+.form-group input[type="file"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: white;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--gold, #d4af37);
+  outline: none;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+}
+
+.form-group input[type="file"] {
+  padding: 9px;
+  background: #1a1a1a;
+  cursor: pointer;
+}
+
+.form-group input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--gold, #d4af37);
+  margin-top: 5px;
+}
+
+.error-text {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  grid-column: 1 / -1;
+}
+
+.btn-submit {
+  background: var(--gold, #d4af37);
+  color: #111;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  flex: 2;
+  transition: 0.3s;
+}
+
+.btn-submit:hover {
+  background: #b5952f;
+}
+
+.btn-back {
+  background: #333;
+  color: white;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  flex: 1;
+  transition: 0.3s;
+}
+
+.btn-back:hover {
+  background: #444;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+input[type="color"] {
+  -webkit-appearance: none;
+  border: none;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 6px;
+}

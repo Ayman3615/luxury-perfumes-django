@@ -1,0 +1,268 @@
+{% load static %}
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <!-- يفضل جعل الاتجاه من اليمين لليسار إذا كان المتجر بالعربية -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cart - Luxury Perfumes</title>
+    <link rel="stylesheet" href="{% static 'products/style.css' %}" />
+
+    
+
+
+
+<!-- === تنسيق الهيدر الاحترافي للموبايل === -->
+<style>
+@media (max-width: 768px) {
+    /* جعل الهيدر صفاً واحداً متناسقاً */
+    header, .navbar, nav {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 15px 20px !important;
+        box-sizing: border-box !important;
+        position: relative !important;
+        min-height: 70px !important;
+    }
+    
+    /* ضبط اللوجو */
+    .logo, .navbar-brand, header h1, header a, .logo-text {
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 22px !important;
+        line-height: 1 !important;
+        display: block !important;
+    }
+
+    /* ضبط زر الثلاث شرط (الهامبرجر) */
+    .hamburger {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 5px !important;
+        position: static !important;
+    }
+
+    /* منع أي عناصر أخرى من إفساد الصف */
+    header > div, nav > div {
+        display: flex !important;
+        align-items: center !important;
+        gap: 15px !important;
+    }
+}
+</style>
+<!-- === نهاية تنسيق الهيدر === -->
+
+</head>
+  <body>
+    <div class="overlay">
+      <!-- Navbar خاص بالسلة -->
+      <div class="navbar">
+        <div class="container">
+          <h1>🛒 سلة المشتريات</h1>
+          <div class="nav-links">
+            <a href="{% url 'home' %}">الرئيسية</a>
+            <a href="{% url 'user_product_list' %}">المنتجات</a>
+            <a href="{% url 'logout' %}" class="logout-btn">تسجيل خروج</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="container">
+        <div class="cart-container" dir="rtl">
+          {% if products %}
+          <!-- عرض المنتجات إذا كانت السلة غير فارغة -->
+          {% for product in products %}
+          <div class="cart-item">
+            <!-- صورة واسم المنتج -->
+            <div class="product-details">
+              {% if product.image %}
+              <img
+                src="{{ product.image.url }}"
+                alt="{{ product.name }}"
+                class="product-img"
+              />
+              {% else %}
+              <div
+                style="
+                  width: 60px;
+                  height: 60px;
+                  background: #eee;
+                  border-radius: 8px;
+                "
+              ></div>
+              {% endif %}
+              <span class="product-title">{{ product.name }}</span>
+            </div>
+
+            <!-- سعر القطعة الواحدة -->
+            <div class="product-price">
+              <span class="label">سعر القطعة:</span>
+              <span class="value">{{ product.price }} ج.م</span>
+            </div>
+
+            <!-- أزرار التحكم في الكمية -->
+            <div class="product-quantity">
+              <a
+                href="{% url 'decrease_cart' product.unique_cart_key %}"
+                class="qty-btn"
+                style="text-decoration: none; color: black"
+                >-</a
+              >
+              <span class="qty-input">{{ product.quantity }}</span>
+              <a
+                href="{% url 'increase_cart' product.unique_cart_key %}"
+                class="qty-btn"
+                style="text-decoration: none; color: black"
+                >+</a
+              >
+            </div>
+
+            <!-- إجمالي سعر هذا المنتج -->
+            <div class="product-total">
+              <span class="label">الإجمالي:</span>
+              <span class="value" style="color: #d4af37"
+                >{{ product.total_price }} ج.م</span
+              >
+            </div>
+
+            <!-- زر الحذف -->
+            <a
+              href="{% url 'remove_from_cart' product.unique_cart_key %}"
+              class="delete-btn"
+              style="text-decoration: none"
+            >
+              🗑️ حذف
+            </a>
+          </div>
+          {% endfor %}
+
+          <!-- خط فاصل -->
+          <hr class="cart-divider" />
+
+          <!-- ملخص السلة وزر إتمام الطلب -->
+          <div class="checkout-section">
+            <div class="grand-total">
+              <span class="label">المجموع الكلي:</span>
+              <span class="value highlight-price">{{ total }} ج.م</span>
+            </div>
+            <a
+              href="{% url 'checkout' %}"
+              class="checkout-btn"
+              style="text-decoration: none"
+            >
+              إتمام الطلب (Checkout) ➔
+            </a>
+          </div>
+
+          {% else %}
+          <!-- في حال كانت السلة فارغة -->
+          <div class="empty-cart" style="text-align: center; padding: 50px">
+            <h2>سلة المشتريات فارغة 😔</h2>
+            <p>يبدو أنك لم تضف أي عطور إلى سلتك بعد.</p>
+            <a
+              href="{% url 'user_product_list' %}"
+              class="checkout-btn"
+              style="
+                display: inline-block;
+                margin-top: 20px;
+                text-decoration: none;
+              "
+            >
+              تصفح المنتجات الآن
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  
+
+
+
+<!-- === إصلاح واجهة الموبايل النهائي === -->
+<style>
+@media (max-width: 768px) {
+    /* 1. فك القيود عن طول الصفحة لضمان ظهور الزر الأخير */
+    html, body {
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow-x: hidden !important;
+    }
+    .checkout-container, .main-content, form, .container {
+        height: auto !important;
+        overflow: visible !important;
+        display: block !important;
+    }
+    
+    /* 2. ترتيب بطاقة الدفع وبيانات العميل رأسياً */
+    .row {
+        display: flex !important;
+        flex-direction: column !important;
+        height: auto !important;
+    }
+    .col-md-6, .col-lg-6 {
+        width: 100% !important;
+        max-width: 100% !important;
+        position: relative !important;
+        margin-bottom: 30px !important;
+        height: auto !important;
+    }
+    
+    /* 3. إعطاء مساحة سفلية حتى لا يغطي الواتساب على زر التأكيد */
+    form {
+        padding-bottom: 80px !important;
+    }
+
+    /* 4. إصلاح القائمة الجانبية (الثلاث شرط) */
+    .nav-links, .navbar-nav {
+        display: none !important; 
+        position: absolute !important;
+        top: 70px !important;
+        left: 0 !important;
+        width: 100% !important;
+        background: #ffffff !important;
+        flex-direction: column !important;
+        z-index: 999999 !important;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+        padding: 15px 0 !important;
+    }
+    .nav-links.menu-active, .navbar-nav.menu-active {
+        display: flex !important;
+    }
+    .nav-links a, .navbar-nav a {
+        padding: 10px 20px !important;
+        width: 100% !important;
+        text-align: center !important;
+        border-bottom: 1px solid #f1f1f1 !important;
+    }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // تشغيل أيقونة الثلاث شرط
+    let btn = document.querySelector('.hamburger') || document.querySelector('.navbar-toggler');
+    let nav = document.querySelector('.nav-links') || document.querySelector('.navbar-nav');
+    
+    if (btn && nav) {
+        // استبدال الزر لضمان مسح أي أكواد معطلة قديمة
+        let cleanBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(cleanBtn, btn);
+        
+        cleanBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            nav.classList.toggle('menu-active');
+        });
+    }
+});
+</script>
+<!-- === نهاية الإصلاح === -->
+
+</body>
+</html>

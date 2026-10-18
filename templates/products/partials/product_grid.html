@@ -1,0 +1,59 @@
+{% load i18n %}
+
+<div class="products-grid modern-grid">
+    {% for product in page_obj %}
+    <div class="product-card hidden-reveal" style="transition-delay: 0.{{ forloop.counter0|default:0|slice:'0:1' }}s;">
+        <div class="image-wrapper">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" loading="lazy" />
+            {% else %}
+                <div class="product-image" style="background: var(--bg-color); display: flex; align-items: center; justify-content: center; color: var(--text-color);">{% trans "بدون صورة" %}</div>
+            {% endif %}
+            
+            <a href="{% url 'toggle_wishlist' product.id %}" class="heart-btn" title="{% trans 'المفضلة' %}">
+                <svg class="heart-svg {% if product.id in wishlist_product_ids %}active{% endif %}" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+            </a>
+        </div>
+
+        <div class="product-info">
+            <h3 class="product-title">{{ product.name }}</h3>
+            <div class="product-price">{{ product.price }} {% trans "ج.م" %}</div>
+            
+            <div class="card-actions">
+                <a href="{% url 'product_detail' product.id %}" class="card-btn btn-details">{% trans "التفاصيل" %}</a>
+                <a href="{% url 'add_to_cart' product.id %}" class="card-btn btn-add">
+                    <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    {% trans "أضف للسلة" %}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state hidden-reveal" style="grid-column: 1 / -1; text-align: center; padding: 50px; opacity: 0.8;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 60px; height: 60px; color: var(--gold); margin-bottom: 15px;">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <p style="font-size: 1.1rem; font-weight: bold;">{% trans "لا توجد منتجات تطابق بحثك حالياً." %}</p>
+    </div>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<div class="pagination-wrapper hidden-reveal" style="margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 15px;">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="page-btn ajax-page-link btn-primary-custom">{% trans "السابق" %}</a>
+    {% endif %}
+    
+    <span class="page-current" style="font-weight: 600; color: var(--text-color);">{% trans "صفحة" %} {{ page_obj.number }} {% trans "من" %} {{ page_obj.paginator.num_pages }}</span>
+    
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="page-btn ajax-page-link btn-primary-custom">{% trans "التالي" %}</a>
+    {% endif %}
+</div>
+{% endif %}

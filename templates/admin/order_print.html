@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>فاتورة طلب #{{ order.id }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; color: #000; }
+        .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); font-size: 16px; line-height: 24px; }
+        table { width: 100%; line-height: inherit; text-align: right; border-collapse: collapse; }
+        table td, table th { padding: 10px; border-bottom: 1px solid #ddd; }
+        table th { background: #f5f5f5; font-weight: bold; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { margin: 0; color: #333; }
+        .total-row td { font-weight: bold; font-size: 18px; border-top: 2px solid #333; }
+        @media print {
+            body { padding: 0; }
+            .invoice-box { box-shadow: none; border: none; margin: 0; }
+            button { display: none; }
+        }
+    </style>
+</head>
+<!-- السطر الجاي بيخلي الصفحة تفتح نافذة الطباعة أوتوماتيك أول ما تفتح -->
+<body onload="window.print()">
+    <div class="invoice-box">
+        <div class="header">
+            <h1>Luxury Perfume Store</h1>
+            <p>فاتورة طلب رقم: <strong>#{{ order.id }}</strong></p>
+            <p>تاريخ الطلب: {{ order.created_at|date:"Y-m-d H:i" }}</p>
+        </div>
+
+        <h3>👤 بيانات العميل:</h3>
+        <p>
+            <strong>الاسم:</strong> {{ order.name }}<br>
+            <strong>الهاتف:</strong> {{ order.phone }}<br>
+            <strong>المحافظة:</strong> {{ order.get_city_display }}<br>
+            <strong>العنوان التفصيلي:</strong> {{ order.address }}<br>
+            <strong>طريقة الدفع:</strong> {{ order.get_payment_method_display }}
+        </p>
+
+        <h3>🛒 تفاصيل المنتجات:</h3>
+        <table>
+            <tr>
+                <th>المنتج</th>
+                <th>الحجم</th>
+                <th>الكمية</th>
+                <th>السعر للوحدة</th>
+                <th>الإجمالي</th>
+            </tr>
+            {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.size }} ML</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }} ج.م</td>
+                <td>{{ item.total_cost }} ج.م</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="4" style="text-align: left; font-weight: bold;">تكلفة الشحن:</td>
+                <td>{{ order.shipping_cost }} ج.م</td>
+            </tr>
+            <tr class="total-row">
+                <td colspan="4" style="text-align: left;">الإجمالي النهائي:</td>
+                <td>{{ order.total_price }} ج.م</td>
+            </tr>
+        </table>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <p>شكراً لتسوقكم معنا! ✨</p>
+        </div>
+        
+        <button onclick="window.print()" style="display:block; width:100%; padding:15px; margin-top:20px; font-size:18px; background:#007bff; color:#fff; border:none; cursor:pointer;">
+            🖨️ طباعة الفاتورة الآن
+        </button>
+    </div>
+</body>
+</html>

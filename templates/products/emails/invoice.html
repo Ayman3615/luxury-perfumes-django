@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Invoice</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 20px;
+      background-color: #121212;
+      font-family: &quot;Segoe UI&quot;, Arial, sans-serif;
+      color: #e0e0e0;
+    "
+  >
+    <div
+      style="
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #1a1a1c;
+        border: 1px solid #333333;
+        overflow: hidden;
+      "
+    >
+      <!-- Header (Logo Area) -->
+      <div style="padding: 25px 20px; border-bottom: 1px solid #2a2a2a">
+        <h2
+          style="
+            margin: 0;
+            color: #60a5fa;
+            font-weight: bold;
+            letter-spacing: 1px;
+          "
+        >
+          <!-- يمكنك استبدال النص بصورة لوجو المتجر الخاص بك هنا -->
+          متجر العطور
+        </h2>
+      </div>
+
+      <!-- Blue Banner -->
+      <div
+        style="background-color: #3b82f6; padding: 40px 30px; color: #ffffff"
+      >
+        <h1
+          style="
+            margin: 0;
+            font-size: 38px;
+            font-weight: normal;
+            line-height: 1.2;
+          "
+        >
+          Thank you<br />for your<br />order
+        </h1>
+      </div>
+
+      <!-- Intro Text -->
+      <div style="padding: 30px 20px 10px 20px">
+        <p style="margin-top: 0; font-size: 15px; color: #e0e0e0">
+          Hi {{ order.name }},
+        </p>
+        <p
+          style="
+            margin-top: 5px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #a0a0a0;
+          "
+        >
+          Just to let you know — we've received your order #{{ order.id }}, and
+          it is now being processed:
+        </p>
+      </div>
+
+      <!-- Order Number & Date -->
+      <div style="padding: 10px 20px 20px 20px">
+        <h2 style="margin: 0; color: #60a5fa; font-size: 26px">
+          [Order #{{ order.id }}]
+        </h2>
+        <h2 style="margin: 5px 0 0 0; color: #60a5fa; font-size: 26px">
+          ({{ order.created_at|date:"F j, Y" }})
+        </h2>
+      </div>
+
+      <!-- Order Table -->
+      <div style="padding: 0 20px">
+        <table
+          style="
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #333333;
+            font-size: 15px;
+          "
+        >
+          <thead>
+            <tr>
+              <th
+                style="
+                  border: 1px solid #333333;
+                  padding: 15px;
+                  text-align: left;
+                  color: #b0b0b0;
+                  font-weight: normal;
+                "
+              >
+                Product
+              </th>
+              <th
+                style="
+                  border: 1px solid #333333;
+                  padding: 15px;
+                  text-align: left;
+                  color: #b0b0b0;
+                  font-weight: normal;
+                "
+              >
+                Quantity
+              </th>
+              <th
+                style="
+                  border: 1px solid #333333;
+                  padding: 15px;
+                  text-align: left;
+                  color: #b0b0b0;
+                  font-weight: normal;
+                "
+              >
+                Price
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 🔴 التعديل هنا: استخدمنا order.items.all فقط -->
+            {% for item in order.items.all %}
+            <tr>
+              <td
+                style="
+                  border: 1px solid #333333;
+                  padding: 15px;
+                  color: #d0d0d0;
+                  line-height: 1.5;
+                "
+              >
+                {{ item.product.name }}<br />
+                <span style="color: #888888; font-size: 13px"
+                  >Size: {{ item.size|default:"50" }} ML</span
+                >
+              </td>
+              <td
+                style="border: 1px solid #333333; padding: 15px; color: #d0d0d0"
+              >
+                {{ item.quantity }}
+              </td>
+              <!-- 🔴 التعديل هنا: استخدمنا total_cost اللي أنت مبرمجها في models -->
+              <td
+                style="border: 1px solid #333333; padding: 15px; color: #d0d0d0"
+              >
+                {{ item.total_cost }} EGP
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td
+                colspan="3"
+                style="
+                  border: 1px solid #333333;
+                  padding: 15px;
+                  text-align: center;
+                "
+              >
+                No items found
+              </td>
+            </tr>
+            {% endfor %}
+
+            <!-- Subtotal & Total & Payment -->
+            <tr>
+              <td
+                colspan="2"
+                style="
+                  border: 1px solid #333333;
+                  padding: 15px;
+                  color: #a0a0a0;
+                  font-weight: bold;
+                "
+              >
+                Subtotal:
+              </td>
+              <td
+                style="border: 1px solid #333333; padding: 15px; color: #a0a0a0"
+              >
+                {{ order.total_price }} EGP
+              </td>
+            </tr>
+            <tr>
+              <td
+                colspan="2"
+                style="
+                  border: 1px solid #333333;
+                  padding: 15px;
+                  color: #a0a0a0;
+                  font-weight: bold;
+                "
+              >
+                Total:
+              </td>
+              <td
+                style="border: 1px solid #333333; padding: 15px; color: #a0a0a0"
+              >
+                {{ order.total_price }} EGP
+              </td>
+            </tr>
+            <tr>
+              <td
+                colspan="2"
+                style="
+                  border: 1px solid #333333;
+                  padding: 15px;
+                  color: #a0a0a0;
+                  font-weight: bold;
+                "
+              >
+                Payment method:
+              </td>
+              <td
+                style="border: 1px solid #333333; padding: 15px; color: #a0a0a0"
+              >
+                {{ order.payment_method }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Billing Address -->
+      <div style="padding: 20px">
+        <h3
+          style="
+            color: #60a5fa;
+            font-size: 22px;
+            margin: 20px 0 15px 0;
+            font-weight: normal;
+          "
+        >
+          Billing address
+        </h3>
+
+        <div style="border: 1px solid #333333; padding: 20px; line-height: 1.6">
+          <!-- الاسم باللون الأبيض الفاتح -->
+          <div style="color: #e0e0e0; font-size: 16px; margin-bottom: 5px">
+            {{ order.name }}
+          </div>
+
+          <!-- العنوان بلون رمادي -->
+          <div style="color: #999999; font-size: 15px">
+            {{ order.address }}<br />
+            {{ order.city }}
+          </div>
+
+          <!-- الهاتف والإيميل بلون أزرق مثل الروابط -->
+          <div style="margin-top: 5px">
+            <a
+              href="tel:{{ order.phone }}"
+              style="color: #60a5fa; text-decoration: none; font-size: 15px"
+              >{{ order.phone }}</a
+            ><br />
+            {% if order.user.email %}
+            <a
+              href="mailto:{{ order.user.email }}"
+              style="color: #60a5fa; text-decoration: none; font-size: 15px"
+              >{{ order.user.email }}</a
+            >
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div
+        style="
+          padding: 10px 20px 40px 20px;
+          text-align: left;
+          color: #a0a0a0;
+          font-size: 14px;
+        "
+      >
+        Thanks for using our store!
+        <br /><br />
+        <div style="color: #555555; text-align: center; margin-top: 20px">
+          - متجر العطور -
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

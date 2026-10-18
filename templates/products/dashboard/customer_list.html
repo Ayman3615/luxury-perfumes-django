@@ -1,0 +1,131 @@
+{% extends 'products/dashboard/dashboard_base.html' %}
+
+{% block title %}إدارة العملاء | لوحة التحكم{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* أنيميشن دخول الجدول */
+    @keyframes fadeInTable {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header { 
+        margin-bottom: 30px; 
+        border-bottom: 1px dashed var(--border);
+        padding-bottom: 15px;
+    }
+    
+    .page-header h2 {
+        color: var(--gold);
+        margin: 0;
+        font-size: 24px;
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+    }
+
+    .table-container { 
+        background: var(--bg-card); 
+        border-radius: 16px; 
+        border: 1px solid var(--border); 
+        padding: 30px; 
+        overflow-x: auto; 
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        animation: fadeInTable 0.5s ease forwards;
+    }
+
+    /* تنسيق الجدول الاحترافي */
+    .custom-table { width: 100%; border-collapse: collapse; text-align: right; }
+    .custom-table th, .custom-table td { padding: 16px 15px; border-bottom: 1px solid #222; font-size: 14px; }
+    .custom-table th { color: var(--gold); background: #111; font-weight: bold; border-bottom: 2px solid var(--border); }
+    .custom-table tr { transition: background 0.3s ease; }
+    .custom-table tr:hover td { background: rgba(255, 255, 255, 0.02); color: white; }
+
+    /* شارات العملاء (Badges) */
+    .badge { 
+        padding: 6px 12px; 
+        border-radius: 20px; 
+        font-size: 12px; 
+        font-weight: bold; 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 5px; 
+    }
+    .bg-vip { 
+        background: rgba(212, 175, 55, 0.15); 
+        color: var(--gold); 
+        border: 1px solid var(--gold); 
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+    }
+    .bg-normal { 
+        background: rgba(52, 152, 219, 0.15); 
+        color: #3498db; 
+        border: 1px solid rgba(52, 152, 219, 0.4); 
+    }
+    .status-zero {
+        color: #777;
+        font-weight: bold;
+        font-size: 13px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 4px 10px;
+        border-radius: 20px;
+    }
+    
+    .empty-state { text-align: center; padding: 50px; color: #777; font-size: 15px; }
+</style>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-header">
+    <h2>👥 قائمة العملاء المسجلين</h2>
+</div>
+
+<div class="table-container">
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>اسم العميل</th>
+                <th>البريد الإلكتروني</th>
+                <th>رقم الهاتف</th>
+                <th>المحافظة</th>
+                <th>تاريخ التسجيل</th>
+                <th>سجل الطلبات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td style="font-weight: bold; color: #fff;">
+                    {{ customer.first_name|default:customer.username }}
+                </td>
+                <td style="color: #ccc;">{{ customer.email|default:"—" }}</td>
+                
+                <!-- تم إضافة direction: ltr لضبط اتجاه الأرقام -->
+                <td style="color: #ccc; direction: ltr; text-align: right;">
+                    {{ customer.profile.phone|default:"—" }}
+                </td>
+                
+                <td style="color: #ccc;">{{ customer.profile.get_city_display|default:"—" }}</td>
+                
+                <td style="color: #888; font-size: 13px;">{{ customer.date_joined|date:"d M Y" }}</td>
+                
+                <td>
+                    {% if customer.order_count > 3 %}
+                        <span class="badge bg-vip">👑 عميل VIP ({{ customer.order_count }})</span>
+                    {% elif customer.order_count > 0 %}
+                        <span class="badge bg-normal">🛍️ {{ customer.order_count }} طلبات</span>
+                    {% else %}
+                        <span class="status-zero">لم يطلب بعد</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="empty-state">
+                    لا يوجد عملاء مسجلين حتى الآن.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

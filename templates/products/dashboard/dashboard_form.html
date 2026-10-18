@@ -1,0 +1,359 @@
+{% extends 'products/dashboard/dashboard_base.html' %}
+
+{% block title %}{{ title }} | لوحة التحكم{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* أنيميشن الدخول السلس */
+  @keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .form-container {
+    max-width: 700px;
+    margin: 40px auto;
+    background: linear-gradient(145deg, #151515, #0a0a0a);
+    padding: 40px;
+    border-radius: 16px;
+    border: 1px solid #333;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .form-container h2 {
+    color: var(--gold);
+    margin-top: 0;
+    margin-bottom: 35px;
+    text-align: center;
+    border-bottom: 1px dashed #333;
+    padding-bottom: 20px;
+    font-size: 24px;
+    letter-spacing: 1px;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+    transition: all 0.3s ease;
+  }
+
+  .form-group > label {
+    display: block;
+    margin-bottom: 10px;
+    color: #e0e0e0;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  /* تنسيق جميع الحقول بلمسة عصرية */
+  .form-group input:not([type="checkbox"]):not([type="file"]):not([type="color"]),
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 14px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 10px;
+    color: white;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+  }
+
+  .form-group input:not([type="checkbox"]):focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--gold);
+    outline: none;
+    background: #181818;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.15);
+  }
+
+  .form-group input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    background: #1a1a1a;
+    border: 1px dashed #444;
+    border-radius: 10px;
+    color: #aaa;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .form-group input[type="file"]:hover { border-color: var(--gold); color: white; }
+
+  .form-group input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--gold);
+    cursor: pointer;
+  }
+
+  .form-group select[multiple] { height: 160px; padding: 10px; }
+  .form-group select[multiple] option { padding: 10px; margin-bottom: 4px; border-radius: 6px; cursor: pointer; }
+  .form-group select[multiple] option:checked { background: var(--gold) linear-gradient(0deg, var(--gold) 0%, var(--gold) 100%); color: #111; font-weight: bold; }
+
+  .action-buttons { display: flex; gap: 15px; margin-top: 40px; }
+  .btn-submit {
+    background: var(--gold); color: #111; padding: 15px; border: none; border-radius: 10px; flex: 2;
+    font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+  }
+  .btn-submit:hover { background: #b5952f; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3); }
+
+  .btn-back {
+    background: #2a2a2a; color: #ccc; padding: 15px; text-align: center; border-radius: 10px;
+    text-decoration: none; flex: 1; font-weight: bold; transition: all 0.3s ease;
+  }
+  .btn-back:hover { background: #333; color: white; }
+</style>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="form-container">
+  <h2>{{ title }}</h2>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div class="form-group" {% if field.name == 'bundled_products' %}id="bundled-products-group"{% endif %}>
+
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+        {% if field.name == 'image' or field.name == 'image_2' or field.name == 'image_3' %}
+          {% if field.name == 'image' and form.instance.image %}
+            <div class="current-image-box" style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 10px; background: #1a1a1a; border: 1px dashed #444; border-radius: 10px;">
+              <img src="{{ form.instance.image.url }}" alt="صورة المنتج" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #333;">
+              <label style="color: #e74c3c; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px; margin: 0;">
+                <input type="checkbox" name="delete_image" value="yes" style="width: 18px; height: 18px; accent-color: #e74c3c; cursor: pointer;">
+                🗑️ حذف الصورة الحالية
+              </label>
+            </div>
+          {% endif %}
+          {{ field }}
+        {% else %}
+          {{ field }}
+        {% endif %}
+
+        {% if field.help_text %}
+          <small style="color: #888; font-size: 12px; display: block; margin-top: 6px;">{{ field.help_text }}</small>
+        {% endif %}
+
+        {% for error in field.errors %}
+          <div style="color: #e74c3c; font-size: 13px; margin-top: 8px; font-weight: bold;">❌ {{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <!-- ========================================== -->
+    <!-- 🌿 قسم النوتات العطرية (Accords) -->
+    <!-- ========================================== -->
+    <div class="form-group" style="background: #111; padding: 25px; border-radius: 12px; border: 1px dashed #444; margin-top: 30px;">
+        <h3 style="color: var(--gold); font-size: 18px; margin-top: 0; margin-bottom: 15px;">🌿 {% trans "النوتات العطرية للمنتج (Accords)" %}</h3>
+
+        <div id="accords-container" style="display: flex; flex-direction: column; gap: 15px;">
+            {% if form.instance.id %}
+                {% for accord in form.instance.accords.all %}
+                <div class="accord-row" style="display: flex; gap: 10px; align-items: center; background: #111; padding: 15px; border-radius: 8px; border: 1px solid #444;">
+                    <!-- 1. خانة النوتة بالعربي -->
+                    <input type="text" name="accord_name" value="{{ accord.name }}" placeholder="{% trans 'اسم النوتة (عربي)' %}" required onkeyup="autoPredictColor(this)" style="flex: 1.5; padding: 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: white;">
+
+                    <!-- 2. خانة النوتة بالإنجليزي (اللي كانت ناقصة في العرض القديم) -->
+                    <input type="text" name="accord_name_en" value="{{ accord.name_en|default_if_none:'' }}" placeholder="{% trans 'النوتة (إنجليزي)' %}" style="flex: 1.5; padding: 10px; background: #1a1a1a; border: 1px dashed var(--gold); border-radius: 6px; color: white;">
+
+                    <!-- 3. النسبة -->
+                    <input type="number" name="accord_percentage" value="{{ accord.percentage }}" placeholder="{% trans 'النسبة %' %}" required min="1" max="100" style="flex: 1; padding: 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: white;">
+
+                    <!-- 4. اللون -->
+                    <input type="color" name="accord_color" value="{{ accord.color_theme }}" required style="width: 50px; height: 44px; background: transparent; border: none; cursor: pointer; padding: 0;" title="{% trans 'اختر اللون' %}">
+
+                    <!-- 5. زرار الحذف -->
+                    <button type="button" onclick="this.parentElement.remove()" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 15px; cursor: pointer; font-weight: bold;">X</button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <button type="button" onclick="addAccordRow()" style="margin-top: 15px; background: transparent; color: var(--gold); border: 1px dashed var(--gold); padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;" onmouseover="this.style.background='rgba(212, 175, 55, 0.1)'" onmouseout="this.style.background='transparent'">
+            + {% trans "إضافة اتجاه عطري" %}
+        </button>
+    </div>
+    <!-- ========================================== -->
+    <!-- 🖼️ قسم معرض الصور (Gallery) المتعددة -->
+    <!-- ========================================== -->
+    <div class="form-group" style="background: #111; padding: 25px; border-radius: 12px; border: 1px dashed #444; margin-top: 30px;">
+        <h3 style="color: var(--gold); font-size: 18px; margin-top: 0; margin-bottom: 15px;">📸 معرض صور المنتج (Gallery)</h3>
+
+        {% if form.instance.productimage_set.all %}
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #333;">
+                {% for gallery_img in form.instance.productimage_set.all %}
+                    <div style="background: #1a1a1a; padding: 10px; border-radius: 10px; border: 1px solid #333; text-align: center; width: fit-content;">
+                        <img src="{{ gallery_img.image.url }}" style="width: 90px; height: 90px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; border: 1px solid #444;">
+                        <label style="color: #e74c3c; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 13px; font-weight: bold; margin: 0;">
+                            <input type="checkbox" name="delete_gallery_images" value="{{ gallery_img.id }}" style="width: 16px; height: 16px; accent-color: #e74c3c; cursor: pointer;">
+                            حذف
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: #888; font-size: 14px; margin-bottom: 20px;">لا توجد صور إضافية في المعرض حالياً.</p>
+        {% endif %}
+
+        <label style="font-size: 14px; color: #ccc; margin-bottom: 10px; display: block;">➕ أضف صور جديدة للمعرض (يمكنك تحديد أكثر من صورة معاً):</label>
+        <input type="file" name="gallery" multiple accept="image/*" style="width: 100%; padding: 12px; background: #1a1a1a; border: 1px dashed var(--gold); border-radius: 8px; color: white; cursor: pointer;">
+    </div>
+
+    <!-- أزرار الحفظ -->
+    <div class="action-buttons">
+      <button type="submit" class="btn-submit">💾 حفظ البيانات</button>
+      <a href="javascript:history.back()" class="btn-back">إلغاء</a>
+    </div>
+  </form>
+</div>
+
+<!-- ========================================== -->
+<!-- ⚙️ كود الجافاسكريبت المجمع (مراجَع 100%) -->
+<!-- ========================================== -->
+<script>
+  // 1. إخفاء وإظهار حقل الباقات المجمعة
+  document.addEventListener("DOMContentLoaded", function() {
+    const isBundleCheckbox = document.getElementById("id_is_bundle");
+    const bundledProductsGroup = document.getElementById("bundled-products-group");
+
+    function toggleBundledProducts() {
+      if (isBundleCheckbox && bundledProductsGroup) {
+        if (isBundleCheckbox.checked) {
+          bundledProductsGroup.style.display = "flex";
+        } else {
+          bundledProductsGroup.style.display = "none";
+        }
+      }
+    }
+    toggleBundledProducts();
+    if (isBundleCheckbox) isBundleCheckbox.addEventListener("change", toggleBundledProducts);
+  });
+
+  // 2. قاموس الألوان الذكي للنوتات العطرية
+  const colorDictionary = {
+      'خشب': '#8b4513', 'عود': '#5c4033', 'صندل': '#d2b48c', 'أرز': '#a0522d',
+      'ليمون': '#f1c40f', 'برتقال': '#e67e22', 'حمضيات': '#f39c12', 'برغموت': '#f39c12',
+      'فانيليا': '#f5deb3', 'عنبر': '#d35400', 'مسك': '#ffebcd', 'تونكا': '#8b4513',
+      'ورد': '#ff69b4', 'ياسمين': '#fffacd', 'لافندر': '#9b59b6', 'أزهار': '#ffb6c1',
+      'نعناع': '#2ecc71', 'باتشولي': '#27ae60', 'عشب': '#7cfc00', 'منعش': '#2ecc71',
+      'توابل': '#c0392b', 'قرفة': '#d2691e', 'هيل': '#8b4513', 'فلفل': '#696969'
+  };
+
+  function autoPredictColor(inputElem) {
+      let text = inputElem.value.toLowerCase();
+      let colorPicker = inputElem.parentElement.querySelector('input[type="color"]');
+      for (const [keyword, hex] of Object.entries(colorDictionary)) {
+          if (text.includes(keyword)) {
+              colorPicker.value = hex;
+              break;
+          }
+      }
+  }
+
+  // 3. إضافة نوتة جديدة (فيها خانة عربي وخانة إنجليزي)
+  function addAccordRow() {
+    const container = document.getElementById('accords-container');
+    const row = document.createElement('div');
+    row.className = 'accord-row';
+    row.style.cssText = 'display: flex; gap: 10px; align-items: center; background: #111; padding: 15px; border-radius: 8px; border: 1px solid #444; animation: fadeIn 0.3s ease; margin-bottom: 10px;';
+
+    row.innerHTML = `
+        <input type="text" name="accord_name" placeholder="النوتة (عربي)" required onkeyup="autoPredictColor(this)" style="flex: 1.5; padding: 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: white;">
+        <input type="text" name="accord_name_en" placeholder="الترجمة الإنجليزية (تلقائي)" style="flex: 1.5; padding: 10px; background: #1a1a1a; border: 1px dashed var(--gold); border-radius: 6px; color: white;">
+        <input type="number" name="accord_percentage" placeholder="النسبة %" required min="1" max="100" style="flex: 1; padding: 10px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; color: white;">
+        <input type="color" name="accord_color" value="#d4af37" required style="width: 50px; height: 44px; background: transparent; border: none; cursor: pointer; padding: 0;" title="اختر اللون">
+        <button type="button" onclick="this.parentElement.remove()" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 15px; cursor: pointer; font-weight: bold;">X</button>
+    `;
+    container.appendChild(row);
+  }
+
+  // 4. إضافة خانة لمعرض الصور
+  function addGalleryInput() {
+      const container = document.getElementById('gallery-inputs-container');
+      const row = document.createElement('div');
+      row.style.cssText = 'display: flex; gap: 10px; align-items: center; animation: fadeIn 0.3s ease;';
+      row.innerHTML = `
+          <input type="file" name="gallery" accept="image/*" required style="flex: 1; padding: 10px; background: #111; border: 1px dashed #444; border-radius: 6px; color: white; cursor: pointer;">
+          <button type="button" onclick="this.parentElement.remove()" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 15px; cursor: pointer; font-weight: bold;">❌</button>
+      `;
+      container.appendChild(row);
+  }
+
+  // ==========================================
+  // 5. 🤖 زرار الترجمة السحري (الاسم + الوصف + النوتات)
+  // ==========================================
+  setTimeout(() => {
+      let nameAr = document.querySelector('[name="name"]');
+      let nameEn = document.querySelector('[name="name_en"]');
+      let descAr = document.querySelector('[name="description"]');
+      let descEn = document.querySelector('[name="description_en"]');
+
+      if (nameEn) {
+          let translateBtn = document.createElement("button");
+          translateBtn.type = "button";
+          translateBtn.innerHTML = "✨ ترجمة تلقائية للإنجليزية (للاسم والوصف والنوتات)";
+          translateBtn.style.cssText = "background: #d4af37; color: #111; padding: 12px 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 15px; width: 100%; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(212, 175, 55, 0.2);";
+
+          // الزرار هيظهر فوق خانة الاسم الإنجليزي مباشرة
+          nameEn.parentNode.insertBefore(translateBtn, nameEn);
+
+          async function googleTranslate(text) {
+              if (!text) return "";
+              let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+              let res = await fetch(url);
+              let data = await res.json();
+              return data[0].map(item => item[0]).join('');
+          }
+
+          translateBtn.addEventListener("click", async function(e) {
+              e.preventDefault();
+
+              if ((!nameAr || !nameAr.value) && (!descAr || !descAr.value)) {
+                  alert("⚠️ يرجى كتابة البيانات بالعربي أولاً!");
+                  return;
+              }
+
+              let originalText = this.innerHTML;
+              let originalBg = this.style.background;
+
+              this.innerHTML = "⏳ جاري الترجمة...";
+              this.style.background = "#888";
+
+              try {
+                  // ترجمة الاسم والوصف الأساسيين
+                  if (nameAr && nameAr.value) nameEn.value = await googleTranslate(nameAr.value);
+                  if (descAr && descAr.value) descEn.value = await googleTranslate(descAr.value);
+
+                  // ترجمة جميع النوتات العطرية
+                  let accordNamesAr = document.querySelectorAll('input[name="accord_name"], input[name="accord_name[]"]');
+                  let accordNamesEn = document.querySelectorAll('input[name="accord_name_en"], input[name="accord_name_en[]"]');
+
+                  for (let i = 0; i < accordNamesAr.length; i++) {
+                      if (accordNamesAr[i].value && accordNamesEn[i]) {
+                          accordNamesEn[i].value = await googleTranslate(accordNamesAr[i].value);
+                      }
+                  }
+
+                  this.innerHTML = "✅ تمت الترجمة بنجاح!";
+                  this.style.background = "#2ecc71";
+                  this.style.color = "white";
+
+                  setTimeout(() => {
+                      this.innerHTML = originalText;
+                      this.style.background = originalBg;
+                      this.style.color = "#111";
+                  }, 3000);
+              } catch (error) {
+                  alert("❌ حدث خطأ في الاتصال.");
+                  this.innerHTML = originalText;
+                  this.style.background = originalBg;
+              }
+          });
+      }
+  }, 500);
+</script>
+{% endblock %}

@@ -1,0 +1,350 @@
+{% load static %}
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{% block title %}Luxury Perfumes{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- FontAwesome Icons (ضروري لشكل أيقونات البار السفلي) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'products/style.css' %}" />
+
+    <!-- لإضافة أي ملفات CSS خاصة بصفحات معينة -->
+    {% block extra_css %}{% endblock %}
+
+    <!-- === تنسيق الهيدر والبار السفلي الاحترافي للموبايل === -->
+    <style>
+      /* إخفاء البار السفلي على شاشات الكمبيوتر */
+      .mobile-bottom-nav {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        /* 1. جعل الهيدر العلوي بسيط وأنيق في المنتصف للموبايل */
+        header, .navbar {
+          display: flex !important;
+          flex-direction: row !important;
+          justify-content: center !important;
+          align-items: center !important;
+          width: 100% !important;
+          padding: 15px 20px !important;
+          box-sizing: border-box !important;
+          position: relative !important;
+          min-height: 65px !important;
+        }
+
+        .logo, .navbar-brand, header h1, header a, .logo-text {
+          margin: 0 !important;
+          padding: 0 !important;
+          font-size: 22px !important;
+          line-height: 1 !important;
+          display: block !important;
+          text-align: center !important;
+        }
+
+        /* إخفاء زر الهامبرجر العلوي لأننا استبدلناه بزر "المزيد" في البار السفلي */
+        .hamburger {
+          display: none !important;
+        }
+
+        /* 2. فك القيود عن طول الصفحة وإعطاء مساحة للبار السفلي */
+        html, body {
+          height: auto !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          padding-bottom: 80px !important; /* مساحة عشان البار السفلي ميغطيش المحتوى */
+        }
+
+        .checkout-container, .main-content, form, .container {
+          height: auto !important;
+          overflow: visible !important;
+          display: block !important;
+        }
+
+        .row {
+          display: flex !important;
+          flex-direction: column !important;
+          height: auto !important;
+        }
+
+        .col-md-6, .col-lg-6 {
+          width: 100% !important;
+          max-width: 100% !important;
+          position: relative !important;
+          margin-bottom: 30px !important;
+          height: auto !important;
+        }
+
+        form {
+          padding-bottom: 85px !important;
+        }
+
+        /* 3. قائمة "المزيد" المنبثقة فوق البار السفلي */
+        .nav-links, .navbar-nav {
+          display: none !important;
+          position: fixed !important;
+          bottom: 70px !important; /* تظهر فوق البار السفلي مباشرة */
+          top: auto !important;
+          left: 0 !important;
+          width: 100% !important;
+          background: #ffffff !important;
+          flex-direction: column !important;
+          z-index: 99998 !important;
+          box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.12) !important;
+          padding: 10px 0 !important;
+          border-top-left-radius: 20px !important;
+          border-top-right-radius: 20px !important;
+        }
+
+        .nav-links.menu-active, .navbar-nav.menu-active {
+          display: flex !important;
+        }
+
+        .nav-links a, .navbar-nav a {
+          padding: 12px 20px !important;
+          width: 100% !important;
+          text-align: center !important;
+          color: #222 !important;
+          font-weight: 600 !important;
+          border-bottom: 1px solid #f5f5f5 !important;
+          text-decoration: none !important;
+        }
+
+        /* ==========================================
+           4. تصميم البار السفلي (Ana Vodafone Style)
+           ========================================== */
+        .mobile-bottom-nav {
+          display: flex !important;
+          flex-direction: row !important;
+          justify-content: space-around !important;
+          align-items: center !important;
+          position: fixed !important;
+          bottom: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          width: 100% !important;
+          height: 65px !important;
+          background-color: #ffffff !important;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08) !important;
+          z-index: 99999 !important;
+          padding: 0 5px !important;
+          padding-bottom: env(safe-area-inset-bottom) !important;
+          border-top-left-radius: 18px !important;
+          border-top-right-radius: 18px !important;
+          box-sizing: border-box !important;
+        }
+
+        .bottom-nav-item {
+          flex: 1 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: center !important;
+          justify-content: center !important;
+          text-decoration: none !important;
+          color: #555555 !important;
+          font-family: 'Cairo', 'Poppins', sans-serif !important;
+          font-size: 11px !important;
+          font-weight: 600 !important;
+          gap: 4px !important;
+          height: 100% !important;
+          transition: all 0.25s ease !important;
+          position: relative !important;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .bottom-nav-item i {
+          font-size: 19px !important;
+          transition: transform 0.25s ease, color 0.25s ease !important;
+        }
+
+        /* لون الأيقونة النشطة (ذهبي فخم، وتقدر تغيره لـ #e60000 لو عاوزه أحمر فودافون) */
+        .bottom-nav-item.active,
+        .bottom-nav-item:hover {
+          color: #d4af37 !important;
+        }
+
+        .bottom-nav-item.active i {
+          transform: translateY(-2px) !important;
+        }
+
+        /* الدائرة البارزة في المنتصف (البروفايل / الحساب) */
+        .bottom-nav-center {
+          flex: 1 !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          position: relative !important;
+          height: 100% !important;
+        }
+
+        .center-floating-btn {
+          position: absolute !important;
+          top: -26px !important; /* ترفع الدائرة لفوق بره الشريط */
+          width: 62px !important;
+          height: 62px !important;
+          background-color: #ffffff !important;
+          border-radius: 50% !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+          border: 3px solid #f8f9fa !important;
+          color: #222222 !important;
+          text-decoration: none !important;
+          transition: all 0.3s ease !important;
+          overflow: hidden !important;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .center-floating-btn i {
+          font-size: 24px !important;
+        }
+
+        .center-profile-img {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          border-radius: 50% !important;
+        }
+
+        .center-floating-btn.active,
+        .center-floating-btn:active {
+          transform: scale(0.95) translateY(-2px) !important;
+          border-color: #d4af37 !important;
+          color: #d4af37 !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="overlay">
+      <!-- ================= TOP NAVBAR ================= -->
+      <div class="navbar">
+        <div class="container">
+          <h1 class="logo">Luxury Perfumes</h1>
+
+          <!-- زر الهامبرجر (مخفي على الموبايل لأننا نقلناه للبار السفلي) -->
+          <div class="hamburger" id="hamburger">☰</div>
+
+          <!-- الروابط (تظهر كقائمة منبثقة عند الضغط على "المزيد" في الموبايل) -->
+          <div class="nav-links" id="nav-links">
+            <a href="{% url 'home' %}">الرئيسية</a>
+            <a href="{% url 'user_product_list' %}">المتجر</a>
+            <a href="{% url 'cart' %}">🛒 السلة</a>
+
+            {% if user.is_authenticated %}
+            <a href="{% url 'my_orders' %}">طلباتي</a>
+            <a href="{% url 'logout' %}" class="logout-btn">تسجيل خروج</a>
+            {% else %}
+            <a href="{% url 'login' %}">تسجيل دخول</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <!-- ================= END TOP NAVBAR ================= -->
+
+      <!-- ================= MAIN CONTENT ================= -->
+      <div
+        class="main-content container"
+        style="margin-top: 30px; min-height: 70vh"
+      >
+        {% block content %} {% endblock %}
+      </div>
+      <!-- ================= END MAIN CONTENT ================= -->
+    </div>
+
+    <!-- ================= MOBILE BOTTOM NAVBAR (Vodafone Style) ================= -->
+    <div class="mobile-bottom-nav">
+      <!-- 1. الرئيسية (Home) -->
+      <a
+        href="{% url 'home' %}"
+        class="bottom-nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+      >
+        <i class="fa-solid fa-house"></i>
+        <span>الرئيسية</span>
+      </a>
+
+      <!-- 2. العروض / المتجر (Offers / Shop) -->
+      <a
+        href="{% url 'user_product_list' %}"
+        class="bottom-nav-item {% if request.resolver_match.url_name == 'user_product_list' %}active{% endif %}"
+      >
+        <i class="fa-solid fa-fire-flame-curved"></i>
+        <span>المتجر</span>
+      </a>
+
+      <!-- 3. الدائرة البارزة في المنتصف (البروفايل / طلباتي) -->
+      <div class="bottom-nav-center">
+        <a
+          href="{% if user.is_authenticated %}{% url 'my_orders' %}{% else %}{% url 'login' %}{% endif %}"
+          class="center-floating-btn {% if request.resolver_match.url_name == 'my_orders' or request.resolver_match.url_name == 'login' %}active{% endif %}"
+        >
+          <!-- لو حابب تحط صورتك أو لوجو ثابت بدل أيقونة الشخص، فك التعليق عن السطر الجاي وحط مسار الصورة -->
+          <!-- <img src="{% static 'products/images/profile.jpg' %}" alt="Profile" class="center-profile-img"> -->
+          <i class="fa-regular fa-user"></i>
+        </a>
+      </div>
+
+      <!-- 4. السلة (Cart) -->
+      <a
+        href="{% url 'cart' %}"
+        class="bottom-nav-item {% if request.resolver_match.url_name == 'cart' %}active{% endif %}"
+      >
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>السلة</span>
+      </a>
+
+      <!-- 5. المزيد (More - يفتح القائمة) -->
+      <a href="javascript:void(0);" class="bottom-nav-item" id="mobileMoreBtn">
+        <i class="fa-solid fa-bars"></i>
+        <span>المزيد</span>
+      </a>
+    </div>
+    <!-- ================= END MOBILE BOTTOM NAVBAR ================= -->
+
+    <!-- JS -->
+    <script src="{% static 'products/script.js' %}" defer></script>
+
+    {% block extra_js %}{% endblock %}
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        let moreBtn = document.getElementById("mobileMoreBtn");
+        let nav = document.getElementById("nav-links");
+
+        if (moreBtn && nav) {
+          moreBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            nav.classList.toggle("menu-active");
+            moreBtn.classList.toggle("active");
+          });
+
+          // إغلاق القائمة عند الضغط في أي مكان خارجها
+          document.addEventListener("click", function (e) {
+            if (!nav.contains(e.target) && !moreBtn.contains(e.target)) {
+              nav.classList.remove("menu-active");
+              moreBtn.classList.remove("active");
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

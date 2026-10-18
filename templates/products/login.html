@@ -1,0 +1,51 @@
+{% extends 'products/shop_base.html' %}
+{% load i18n %}
+{% block content %}
+
+<div class="auth-wrapper">
+  <div class="auth-card hidden-reveal">
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: var(--gold); font-weight: 800; margin-bottom: 10px;">{% trans "تسجيل الدخول" %}</h1>
+        <p style="color: var(--text-color); opacity: 0.8; margin: 0;">{% trans "مرحباً بك مجدداً في متجرك الفاخر" %}</p>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+
+      {% if error %}
+      <div class="auth-error-box">
+        {{ error }}
+      </div>
+      {% endif %}
+
+      <div class="form-group" style="margin-bottom: 25px; text-align: start;">
+          <label style="display: block; font-weight: bold; margin-bottom: 8px; color: var(--gold);">{% trans 'اسم المستخدم' %}</label>
+          <input type="text" name="username" class="premium-input" required autocomplete="username" />
+      </div>
+
+      <div class="form-group" style="margin-bottom: 25px; text-align: start;">
+          <label style="display: block; font-weight: bold; margin-bottom: 8px; color: var(--gold);">{% trans 'كلمة المرور' %}</label>
+          <div class="password-wrapper">
+              <input type="password" name="password" class="premium-input" required autocomplete="current-password" />
+              <span class="toggle-password" onclick="togglePassword(this)">
+                  <svg class="eye-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+              </span>
+          </div>
+      </div>
+
+      <button type="submit" class="auth-btn" style="margin-top: 10px;">{% trans "تسجيل الدخول" %}</button>
+    </form>
+
+    <p style="margin-top: 30px; text-align: center; font-size: 15px; opacity: 0.9;">
+      {% trans "ليس لديك حساب بعد؟" %}
+      <a href="{% url 'register' %}" class="auth-link" style="color: var(--gold); font-weight: bold; text-decoration: underline;">
+        {% trans "إنشاء حساب جديد" %}
+      </a>
+    </p>
+  </div>
+</div>
+
+{% endblock %}

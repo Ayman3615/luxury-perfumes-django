@@ -1,0 +1,257 @@
+{% extends 'products/dashboard/dashboard_base.html' %} 
+{% block title %}تفاصيل الطلب #{{ order.id }} | لوحة التحكم{% endblock %} 
+
+{% block extra_css %}
+<style>
+  .order-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .order-grid { grid-template-columns: 1fr; } }
+  
+  .card { background: var(--bg-card, #111); padding: 25px; border-radius: 12px; border: 1px solid var(--border, #222); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.3s ease; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+  
+  .card h3 { margin-top: 0; color: var(--gold, #d4af37); border-bottom: 1px solid var(--border, #222); padding-bottom: 15px; margin-bottom: 20px; font-size: 18px; display: flex; align-items: center; gap: 10px; }
+  
+  /* تنسيق بيانات العميل */
+  .customer-info-box { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px dashed #333; margin-bottom: 15px; }
+  .info-line { margin-bottom: 12px; font-size: 15px; color: #fff; display: flex; align-items: flex-start; }
+  .info-line strong { color: #888; display: inline-block; min-width: 130px; font-weight: normal; }
+
+  /* أزرار النسخ الاحترافية */
+  .btn-copy { background: #222; color: var(--gold); border: 1px solid #444; padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: 0.3s; margin-right: 10px; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-copy:hover { background: #333; border-color: var(--gold); color: #fff; }
+  .copied-active { background: #2ecc71 !important; color: #fff !important; border-color: #27ae60 !important; }
+
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; margin-bottom: 8px; color: #aaa; font-weight: bold; }
+  .form-group select, .form-group input { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; color: white; box-sizing: border-box; transition: 0.3s; font-family: inherit; }
+  .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--gold, #d4af37); box-shadow: 0 0 8px rgba(212,175,55,0.2); }
+  
+  .btn-submit { background: var(--gold, #d4af37); color: #111; padding: 12px; border: none; border-radius: 8px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(212,175,55,0.2); }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(212,175,55,0.4); background: #f1c40f; }
+
+  /* تنسيق مربع الدفع */
+  .payment-alert { padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px dashed var(--gold, #d4af37); background: rgba(212, 175, 55, 0.05); }
+  .badge { padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: bold; color: white; display: inline-flex; align-items: center; gap: 5px; margin-top: 5px; }
+  
+  /* تنسيق الجدول الاحترافي */
+  .items-table { width: 100%; text-align: right; border-collapse: separate; border-spacing: 0; }
+  .items-table th { padding: 12px; color: #888; border-bottom: 2px solid #333; background: #1a1a1a; font-weight: normal; }
+  .items-table th:first-child { border-top-right-radius: 8px; }
+  .items-table th:last-child { border-top-left-radius: 8px; }
+  .items-table td { padding: 15px 12px; border-bottom: 1px solid #222; color: #ddd; vertical-align: middle; }
+  .items-table tr:hover td { background: rgba(255,255,255,0.02); }
+</style>
+{% endblock %} 
+
+{% block dashboard_content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+  <div>
+      <h2 style="margin: 0; color: white;">🛒 تفاصيل الطلب <span style="color: var(--gold);">#{{ order.id }}</span></h2>
+      <span style="color: #888; font-size: 14px;">📅 تم الإنشاء: {{ order.created_at|date:"d M Y - h:i A" }}</span>
+  </div>
+  <a href="{% url 'dashboard_home' %}" style="color: #aaa; text-decoration: none; border: 1px solid #333; padding: 8px 15px; border-radius: 6px; transition: 0.3s; background: #111;" onmouseover="this.style.background='#333'; this.style.color='white';" onmouseout="this.style.background='#111'; this.style.color='#aaa';">← العودة للرئيسية</a>ات</a>
+</div>
+
+<div class="order-grid">
+  <!-- الجزء الأول: بيانات العميل والمنتجات -->
+  <div>
+    <div class="card">
+      <h3>👤 بيانات العميل والشحن</h3>
+      <div class="customer-info-box">
+          <div class="info-line"><strong>الاسم بالكامل:</strong> {{ order.name }}</div>
+          
+          <div class="info-line">
+              <strong>رقم الهاتف:</strong> 
+              <span id="customer-phone" style="direction: ltr; font-family: monospace; font-size: 16px;">{{ order.phone }}</span>
+              <button onclick="copyText('customer-phone', this)" class="btn-copy">📋 نسخ</button>
+              <a href="tel:{{ order.phone }}" style="color: var(--gold); text-decoration: none; font-size: 13px; margin-right: 10px;">📞 اتصال</a>
+          </div>
+          
+          <div class="info-line"><strong>المحافظة:</strong> <span style="color: var(--gold);">{{ order.get_city_display|default:order.city }}</span></div>
+          <div class="info-line"><strong>المدينة / المركز:</strong> {{ order.district|default:"<span style='color:#777;'>غير محدد</span>"|safe }}</div>
+          
+          <div class="info-line" style="border-top: 1px dashed #444; padding-top: 12px; margin-top: 12px;">
+              <strong>العنوان التفصيلي:</strong> 
+              <div>
+                  <div id="full-address" style="line-height: 1.6; color: #ddd; margin-bottom: 8px;">
+                      المحافظة: {{ order.get_city_display|default:order.city }}<br>
+                      {% if order.district %}المدينة/المركز: {{ order.district }}<br>{% endif %}
+                      التفاصيل: {{ order.address }}
+                  </div>
+                  <button onclick="copyText('full-address', this)" class="btn-copy" style="background: var(--gold); color: #111; border-color: var(--gold);">
+                      ✂️ نسخ العنوان بالكامل لبوليصة الشحن
+                  </button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <!-- 🔴 تفاصيل الدفع والتحصيل -->
+    <div class="payment-alert">
+        <h4 style="margin: 0 0 15px 0; color: var(--gold, #d4af37);">💳 تفاصيل الدفع والتحصيل</h4>
+        
+        <p style="margin: 5px 0 10px 0;">
+            <strong>طريقة الدفع المختارة:</strong> 
+            {% if order.payment_method == 'cash' %}
+                <span style="color: #f1c40f; font-weight: bold; font-size: 15px;">💵 الدفع عند الاستلام (COD)</span>
+            {% elif order.payment_method == 'vodafone' %}
+                <span style="color: #e74c3c; font-weight: bold; font-size: 15px;">🔴 تحويل فودافون كاش</span>
+            {% elif order.payment_method == 'instapay_manual' %}
+                <span style="color: #9b59b6; font-weight: bold; font-size: 15px;">🟣 تحويل إنستاباي</span>
+            {% elif order.payment_method in 'card,wallet,instapay_paymob' %}
+                <span style="color: #2ecc71; font-weight: bold; font-size: 15px;">💳 دفع إلكتروني (Paymob)</span>
+            {% else %}
+                <span style="color: #aaa; font-weight: bold; font-size: 15px;">غير محدد ({{ order.payment_method }})</span>
+            {% endif %}
+        </p>
+
+        <p style="margin: 5px 0;">
+            <strong>حالة التحصيل:</strong> 
+            {% if order.payment_method == 'cash' and order.status != 'delivered' %}
+                <span class="badge" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c;">⏳ غير محصل (في انتظار المندوب)</span>
+            {% elif order.payment_method == 'cash' and order.status == 'delivered' %}
+                <span class="badge" style="background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid #2ecc71;">✅ تم التحصيل نقداً</span>
+            {% elif order.payment_status == 'paid' or order.payment_status == 'completed' or order.payment_status == 'approved' or order.payment_status == 'مقبول' %}
+                <span class="badge" style="background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid #2ecc71;">✅ الدفع مكتمل / مقبول</span>
+            {% elif order.payment_status == 'rejected' or order.payment_status == 'failed' or order.payment_status == 'مرفوض' %}
+                <span class="badge" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c;">❌ التحويل مرفوض</span>
+            {% else %}
+                <span class="badge" style="background: rgba(243, 156, 18, 0.2); color: #f39c12; border: 1px solid #f39c12;">⚠️ قيد المراجعة</span>
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- جدول المنتجات -->
+    <div class="card">
+      <h3>🛍️ المنتجات المطلوبة (نظرة محاسبية)</h3>
+      <table class="items-table">
+        <tr>
+          <th>المنتج</th>
+          <th>الكمية</th>
+          <th>السعر</th>
+          <th>التكلفة</th>
+          <th style="color: var(--gold);">الربح</th>
+        </tr>
+        {% for item in order.items.all %}
+        <tr>
+          <td>
+            <strong style="color: white; font-size: 15px;">{{ item.product.name }}</strong><br>
+            <span style="font-size: 12px; color: #888;">حجم: {{ item.size }} مل</span>
+          </td>
+          <td><span style="background: #222; padding: 4px 8px; border-radius: 4px; font-weight: bold;">x{{ item.quantity }}</span></td>
+          <td>{{ item.price }} ج</td>
+          <td style="color: #e74c3c;">{{ item.cost_price }} ج</td>
+          <td style="color: #2ecc71; font-weight: bold;">+{{ item.profit }} ج</td>
+        </tr>
+        {% endfor %}
+      </table>
+      
+      <!-- ملخص الحسابات للأوردر -->
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed #333; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(212,175,55,0.05) 100%); padding: 20px; border-radius: 8px;">
+        <div style="text-align: right;">
+            <div style="color: #aaa; font-size: 14px; margin-bottom: 8px;">قيمة المنتجات: <strong style="color: white; font-size: 16px;">{{ order.total_price }} ج.م</strong></div>
+            <div style="color: #aaa; font-size: 14px;">تكلفة الشحن: <strong style="color: var(--gold); font-size: 16px;">{{ order.shipping_cost|default:0 }} ج.م</strong></div>
+        </div>
+        <div style="text-align: left; border-right: 2px solid #333; padding-right: 20px;">
+            <div style="color: #888; font-size: 13px; margin-bottom: 5px;">صافي ربح الطلب المتوقع</div>
+            <div style="color: #2ecc71; font-size: 26px; font-weight: bold; text-shadow: 0 0 10px rgba(46,204,113,0.2);">+{{ order.net_profit }} ج.م</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- الجزء الثاني: لوحة التحكم في حالة الطلب -->
+  <div>
+    
+    <!-- 🟢 الإجراءات السريعة -->
+    <div class="card" style="background: rgba(212, 175, 55, 0.05); border-color: rgba(212, 175, 55, 0.3);">
+        <h3 style="border-bottom-color: rgba(212, 175, 55, 0.3);">⚡ إجراءات سريعة</h3>
+        <div style="display: flex; gap: 12px; flex-direction: column;">
+            <a href="{% url 'dashboard_order_whatsapp' order.id %}" target="_blank" style="background: #25d366; color: white; padding: 14px; text-align: center; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 10px rgba(37,211,102,0.3);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                💬 رسالة تأكيد واتساب
+            </a>
+            <a href="{% url 'dashboard_order_print' order.id %}" target="_blank" style="background: #222; color: white; padding: 14px; text-align: center; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; transition: 0.3s; border: 1px solid #444; display: flex; justify-content: center; align-items: center; gap: 10px;" onmouseover="this.style.background='#333'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#222'; this.style.transform='translateY(0)'">
+                🖨️ طباعة الفاتورة للعميل
+            </a>
+        </div>
+    </div>
+
+    <!-- 🔴 كارت تحديث حالة الطلب -->
+    <div class="card">
+        <h3>⚙️ تحديث الحالة</h3>
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+              <label>📦 حالة التجهيز والشحن:</label>
+              <select name="status">
+                <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>⏳ قيد المراجعة (جديد)</option>
+                <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>⚙️ جاري التجهيز للطبخ</option>
+                <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>🚚 تم الشحن (خرج مع المندوب)</option>
+                <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>✅ تم التوصيل واستلام النقدية</option>
+                <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>❌ ملغي / مرتجع</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>💸 حالة الدفع (الإلكتروني / التحويل):</label>
+              <select name="payment_status">
+                <option value="pending" {% if order.payment_status == 'pending' %}selected{% endif %}>⏳ قيد المراجعة (أو الدفع كاش)</option>
+                <option value="paid" {% if order.payment_status == 'paid' or order.payment_status == 'completed' %}selected{% endif %}>✔ تم الدفع آلياً (Paymob)</option>
+                <option value="approved" {% if order.payment_status == 'approved' or order.payment_status == 'مقبول' %}selected{% endif %}>✅ مقبول (مراجعة إيصال يدوي)</option>
+                <option value="rejected" {% if order.payment_status == 'rejected' or order.payment_status == 'مرفوض' %}selected{% endif %}>❌ مرفوض (إيصال غير صحيح)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>🔖 رقم التتبع (بوليصة الشحن):</label>
+              <input type="text" name="tracking_number" value="{{ order.tracking_number|default_if_none:'' }}" placeholder="مثال: رقم شحنة بوسطة أو ارامكس" />
+            </div>
+
+            <button type="submit" class="btn-submit">💾 حفظ التحديثات</button>
+        </form>
+    </div>
+
+    <!-- لو العميل رافع صورة تحويل يدوية -->
+    {% if order.payment_proof %}
+    <div class="card" style="border-color: #3498db; background: rgba(52,152,219,0.05);">
+      <h3 style="color: #3498db; border-bottom-color: rgba(52,152,219,0.3);">📸 إثبات التحويل المرفق</h3>
+      <a href="{{ order.payment_proof.url }}" target="_blank" style="display: block; overflow: hidden; border-radius: 8px; border: 1px solid #444; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+        <img src="{{ order.payment_proof.url }}" style="width: 100%; transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" />
+      </a>
+      <p style="font-size: 13px; color: #aaa; text-align: center; margin-top: 12px; font-weight: bold;">
+        🔍 اضغط على الصورة لتكبيرها وفحصها
+      </p>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- سكريبت نسخ النصوص السريع -->
+<script>
+function copyText(elementId, btnElement) {
+    // جلب النص من العنصر المطلوب
+    let textToCopy = document.getElementById(elementId).innerText;
+    
+    // استخدام API حديث للنسخ
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        let originalText = btnElement.innerText;
+        let originalBg = btnElement.style.background;
+        
+        // تغيير شكل الزرار مؤقتاً لتأكيد النسخ
+        btnElement.innerText = "✔ تم النسخ!";
+        btnElement.classList.add("copied-active");
+        
+        // إرجاع الزرار لأصله بعد ثانيتين
+        setTimeout(() => {
+            btnElement.innerText = originalText;
+            btnElement.classList.remove("copied-active");
+        }, 2000);
+    }).catch(err => {
+        console.error('فشل النسخ: ', err);
+        alert('حدث خطأ أثناء النسخ، يرجى التحديد والنسخ يدوياً.');
+    });
+}
+</script>
+{% endblock %}

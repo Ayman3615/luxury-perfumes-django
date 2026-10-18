@@ -1,0 +1,182 @@
+{% extends 'products/shop_base.html' %}
+{% load i18n %}
+{% block content %}
+
+<div class="checkout-wrapper">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert-box {% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <h2 class="checkout-title">💳 {% trans "إتمام الطلب" %}</h2>
+
+  <div class="checkout-grid">
+    <div class="checkout-section">
+      <h3 class="section-title">📍 {% trans "بيانات الشحن والتوصيل" %}</h3>
+
+      <form id="checkoutForm" method="POST" enctype="multipart/form-data" action="{% url 'place_order' %}">
+        {% csrf_token %}
+        <input type="hidden" name="size" value="{{ request.GET.size }}" />
+
+        <div class="form-group">
+          <label>👤 {% trans "الاسم بالكامل" %} <span style="color:var(--gold)">*</span></label>
+          <input type="text" name="name" class="premium-input" placeholder="{% trans 'الاسم الثلاثي' %}" value="{{ request.user.username }}" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>📱 {% trans "رقم الهاتف" %} <span style="color:var(--gold)">*</span></label>
+            <input type="tel" id="phone_input" name="phone" class="premium-input" placeholder="01xxxxxxxxx" value="{{ user_profile.phone|default:'' }}" pattern="^01[0125][0-9]{8}$" maxlength="11" required />
+            <small id="phone_error" style="color: #e74c3c; font-size: 0.85rem; display: none; margin-top: 5px;">⚠️ يجب أن يكون الرقم 11 رقماً ويبدأ بـ 01</small>
+          </div>
+          <div class="form-group flex-1">
+            <label>📧 {% trans "البريد الإلكتروني" %} <span style="color:var(--gold)">*</span></label>
+            <input type="email" name="email" class="premium-input" placeholder="example@mail.com" value="{{ request.user.email|default:'' }}" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>🗺️ {% trans "المحافظة" %} <span style="color:var(--gold)">*</span></label>
+            <select id="id_city" name="city" class="premium-input" required>
+              <option value="" disabled selected>{% trans "اختر المحافظة (سيتم حساب الشحن)" %}</option>
+              <optgroup label="{% trans 'المنطقة الأولى' %}">
+                <option value="qalyubia">{% trans "القليوبية" %}</option>
+              </optgroup>
+              <optgroup label="{% trans 'المنطقة الثانية' %}">
+                <option value="cairo">{% trans "القاهرة" %}</option>
+                <option value="giza">{% trans "الجيزة" %}</option>
+                <option value="alexandria">{% trans "الإسكندرية" %}</option>
+                <option value="sharqia">{% trans "الشرقية" %}</option>
+                <option value="monufia">{% trans "المنوفية" %}</option>
+                <option value="gharbia">{% trans "الغربية" %}</option>
+                <option value="dakahlia">{% trans "الدقهلية" %}</option>
+                <option value="port_said">{% trans "بورسعيد" %}</option>
+                <option value="suez">{% trans "السويس" %}</option>
+                <option value="ismailia">{% trans "الإسماعيلية" %}</option>
+                <option value="damietta">{% trans "دمياط" %}</option>
+                <option value="kafr_el_sheikh">{% trans "كفر الشيخ" %}</option>
+                <option value="beheira">{% trans "البحيرة" %}</option>
+              </optgroup>
+              <optgroup label="{% trans 'المنطقة الثالثة (الصعيد)' %}">
+                <option value="fayoum">{% trans "الفيوم" %}</option>
+                <option value="beni_suef">{% trans "بني سويف" %}</option>
+                <option value="minya">{% trans "المنيا" %}</option>
+                <option value="assiut">{% trans "أسيوط" %}</option>
+                <option value="sohag">{% trans "سوهاج" %}</option>
+                <option value="qena">{% trans "قنا" %}</option>
+                <option value="luxor">{% trans "الأقصر" %}</option>
+                <option value="aswan">{% trans "أسوان" %}</option>
+              </optgroup>
+              <optgroup label="{% trans 'المنطقة الرابعة (الحدودية)' %}">
+                <option value="red_sea">{% trans "البحر الأحمر" %}</option>
+                <option value="matrouh">{% trans "مطروح" %}</option>
+                <option value="new_valley">{% trans "الوادي الجديد" %}</option>
+                <option value="north_sinai">{% trans "شمال سيناء" %}</option>
+                <option value="south_sinai">{% trans "جنوب سيناء" %}</option>
+              </optgroup>
+            </select>
+          </div>
+          
+          <div class="form-group flex-1">
+            <label>🏙️ {% trans "المدينة أو المركز" %} <span style="color:var(--gold)">*</span></label>
+            <input type="text" name="district" class="premium-input" placeholder="{% trans 'مثال: مدينة نصر، المنصورة' %}" required minlength="3" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>🏠 {% trans "العنوان بالتفصيل" %} <span style="color:var(--gold)">*</span></label>
+          <textarea name="address" id="address_input" class="premium-input" rows="3" placeholder="{% trans 'اسم الشارع، رقم العمارة، الدور، رقم الشقة...' %}" required minlength="20">{{ user_profile.address|default:'' }}</textarea>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px; font-size: 0.85rem;">
+            <small id="address_error" style="color: #e74c3c; display: none;">⚠️ العنوان قصير جداً! يرجى كتابة تفاصيل أكثر.</small>
+            <small id="char_count" style="color: #888; font-weight: bold;">0 / 20 حرف كحد أدنى</small>
+          </div>
+        </div>
+
+        <h3 class="section-title mt-40">💳 {% trans "طريقة الدفع" %}</h3>
+        <div class="form-group">
+          <select id="payment_method" name="payment_method" class="premium-input">
+            <option value="cash">💵 {% trans "الدفع نقداً عند الاستلام" %}</option>
+            <option value="card" disabled>💳 {% trans "الدفع إلكترونياً (قريباً)" %}</option>
+            <option value="wallet" disabled>📱 {% trans "المحافظ الإلكترونية (قريباً)" %}</option>
+            <option value="instapay_paymob" disabled>🟣 {% trans "دفع InstaPay تلقائي (قريباً)" %}</option>
+            <option value="vodafone">🔴 {% trans "تحويل فودافون كاش (يدوي - برفع إيصال)" %}</option>
+            <option value="instapay_manual">🟣 {% trans "تحويل InstaPay (يدوي - برفع إيصال)" %}</option>
+          </select>
+        </div>
+
+        <div id="payment-info" class="payment-info-box" style="display: none;">
+          <h4>{% trans "بيانات التحويل" %}</h4>
+          <p id="payment-details"></p>
+        </div>
+
+        <div id="proof-container" class="form-group" style="display: none;">
+          <label>{% trans "صورة إثبات التحويل (سكرين شوت):" %} <span style="color:var(--gold)">*</span></label>
+          <input type="file" name="payment_proof" accept="image/*" class="premium-input p-10" />
+        </div>
+
+        <button type="submit" class="submit-btn">{% trans "تأكيد الطلب" %} 🚀</button>
+      </form>
+    </div>
+
+    <div class="checkout-section checkout-summary sticky-summary">
+      <h4 class="coupon-title">🎟️ {% trans "هل لديك كود خصم؟" %}</h4>
+      <form method="POST" action="{% url 'apply_coupon' %}" class="coupon-form">
+        {% csrf_token %}
+        <div class="coupon-input-group">
+          <input type="text" name="coupon_code" class="premium-input" placeholder="{% trans 'أدخل الكود هنا...' %}" required />
+          <button type="submit" class="coupon-btn">{% trans "تفعيل" %}</button>
+        </div>
+      </form>
+
+      {% if discount_amount and discount_amount > 0 %}
+      <div class="discount-alert">
+        <p>🎉 {% trans "وفرت:" %} {{ discount_amount }} {% trans "ج.م" %}</p>
+      </div>
+      {% endif %}
+
+      <h3 class="section-title">🛍️ {% trans "المنتجات" %}</h3>
+      <div class="checkout-products-list">
+        {% for product in products %}
+        <div class="mini-product-card">
+          <div>
+            <h4>{{ product.name }}</h4>
+            <p>{% trans "الكمية:" %} {{ product.quantity }} × {{ product.price }} {% trans "ج.م" %}</p>
+          </div>
+          <strong>{{ product.total_price }} {% trans "ج.م" %}</strong>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div id="checkout-data" data-cart-total="{{ total }}" class="checkout-totals-box">
+        <div class="price-row">
+          <span>{% trans "سعر المنتجات:" %}</span>
+          <span>{{ total }} {% trans "ج.م" %}</span>
+        </div>
+        <div class="price-row">
+          <span>{% trans "تكلفة الشحن:" %}</span>
+          <span id="shipping_cost_display" class="shipping-cost">{% trans "اختر المحافظة" %}</span>
+        </div>
+        <div class="price-row grand-total">
+          <span>{% trans "الإجمالي النهائي:" %}</span>
+          <span id="grand_total_display" class="final-cost">{{ total }} {% trans "ج.م" %}</span>
+        </div>
+      </div>
+
+      <div class="secure-payment-text">
+        🔒 {% trans "الدفع آمن ومشفر بالكامل" %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="loading-overlay" style="display: none;">
+  <div class="spinner"></div>
+  <h3>{% trans "جاري تجهيز الدفع الآمن..." %}</h3>
+  <p>{% trans "يرجى عدم إغلاق أو تحديث الصفحة" %}</p>
+</div>
+
+{% endblock %}

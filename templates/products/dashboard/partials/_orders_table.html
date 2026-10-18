@@ -1,0 +1,77 @@
+<style>
+    /* شارات حالة الدفع الفخمة */
+    .pay-badge { 
+        padding: 5px 12px; 
+        border-radius: 20px; 
+        font-size: 12px; 
+        font-weight: bold; 
+        display: inline-flex; 
+        align-items: center;
+        gap: 5px;
+    }
+    .pay-success { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
+    .pay-warning { background: rgba(243, 156, 18, 0.15); color: #f39c12; border: 1px solid rgba(243, 156, 18, 0.3); }
+    .pay-danger { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
+    
+    .btn-open {
+        background: var(--gold); 
+        color: #111; 
+        padding: 6px 16px; 
+        border-radius: 8px; 
+        text-decoration: none; 
+        font-size: 13px; 
+        font-weight: bold;
+        transition: 0.3s;
+        box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
+        display: inline-block;
+    }
+    .btn-open:hover { background: #f1c40f; transform: translateY(-2px); }
+</style>
+
+<table class="custom-table">
+    <thead>
+      <tr>
+        <th>رقم الطلب</th>
+        <th>العميل</th>
+        <th>المبلغ</th>
+        <th>حالة الدفع</th>
+        <th>التاريخ</th>
+        <th style="text-align: center;">الإجراء</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td style="font-family: monospace; font-size: 15px; font-weight: bold; color: white;">#{{ order.id }}</td>
+        
+        <td style="font-weight: bold; color: #eee;">{{ order.name }}</td>
+        
+        <td style="color: var(--gold); font-weight: bold; font-size: 15px;">{{ order.total_price }} ج.م</td>
+        
+        <td>
+          {% if order.payment_status == 'paid' or order.payment_status == 'approved' %}
+            <span class="pay-badge pay-success">✅ تم الدفع</span>
+          {% elif order.payment_status == 'rejected' %}
+            <span class="pay-badge pay-danger">❌ مرفوض</span>
+          {% else %}
+            <span class="pay-badge pay-warning">⏳ قيد الانتظار</span>
+          {% endif %}
+        </td>
+        
+        <td style="color: #aaa; font-size: 13px; letter-spacing: 0.5px;">
+            {{ order.created_at|date:"d M - h:i A" }}
+        </td>
+        
+        <td style="text-align: center;">
+          <a href="{% url 'dashboard_order_detail' order.id %}" class="btn-open">فتح</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" style="text-align: center; color: #777; padding: 40px; font-size: 14px;">
+            لا توجد طلبات في هذا القسم حالياً.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+</table>
